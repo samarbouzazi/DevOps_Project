@@ -6,15 +6,5 @@ pipeline {
                 checkout scm
             }
         }
-        
-        stage('Build') {
-            steps {
-                echo "build success"
-            }
-        }
-        
-        
-
-         
     }
 }
