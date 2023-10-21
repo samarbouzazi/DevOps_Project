@@ -3,8 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch = 'master'
-                echo "hello"
+                checkout scm
             }
         }
     }
