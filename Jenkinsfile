@@ -1,3 +1,10 @@
+def getGitBranchName() {
+  return scm.branches[0].name
+}
+
+def branchName
+def targetBranch
+
 pipeline {
   agent any
 
@@ -6,6 +13,30 @@ pipeline {
     DOCKERHUB_USERNAME = "samarbouzezi"
     BACK_TAG = "${DOCKERHUB_USERNAME}/devops_project:spring"
   }
+
+  parameters {
+    string(name: 'BRANCH_NAME', defaultValue: "${scm.branches[0].name}", description: 'Git branch name')
+    string(name: 'CHANGE_ID', defaultValue: '', description: 'Git change ID for merge requests')
+    string(name: 'CHANGE_TARGET', defaultValue: '', description: 'Git change ID for the target merge requests')
+  }
+
+  stage('branch name') {
+      steps {
+        script {
+          branchName = params.BRANCH_NAME
+          echo "Current branch name: ${branchName}"
+        }
+      }
+    }
+
+    stage('target branch') {
+      steps {
+        script {
+          targetBranch = branchName
+          echo "Target branch name: ${targetBranch}"
+        }
+      }
+    }
 
 
   stages {
