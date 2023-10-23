@@ -14,7 +14,7 @@ pipeline {
       steps {
         git branch: branchName,
           url: 'https://github.com/samarbouzazi/DevOps_Project.git',
-          credentialsId: 'githubid'
+          credentialsId: 'github'
       }
     }
 
