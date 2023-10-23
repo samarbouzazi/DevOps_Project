@@ -7,12 +7,12 @@ services:
       - "3307:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=achatdb
+      - MYSQL_DATABASE=devops_project_db
   spring-boot-app:
-    image: 1kbe1436/achat
+    image: samarbouzezi/devops_project_back
     ports:
       - "8089:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-compose-mysql-db-1:3306/achatdb?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliant
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-compose-mysql-db-1:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliant
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
