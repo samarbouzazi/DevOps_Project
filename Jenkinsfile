@@ -9,6 +9,11 @@ pipeline {
 
 
   stages {
+    stage('Checkout'){
+      steps{
+        Checkout SCM
+      }
+    }
     
     stage('Github') {
       steps {
