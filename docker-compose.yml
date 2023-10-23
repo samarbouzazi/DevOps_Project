@@ -4,14 +4,14 @@ services:
     image: mysql:latest
     container_name: docker-compose-mysql-db-1
     ports:
-      - "3307:3306"
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=devops_project_db
   spring-boot-app:
-    image: samarbouzezi/devops_project_back
+    image: samarbouzezi/devops_project:spring
     ports:
-      - "8089:8080"
+      - "8082:8082"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://docker-compose-mysql-db-1:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliant
       - SPRING_DATASOURCE_USERNAME=root
