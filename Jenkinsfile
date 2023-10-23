@@ -20,6 +20,10 @@ pipeline {
     string(name: 'CHANGE_TARGET', defaultValue: '', description: 'Git change ID for the target merge requests')
   }
 
+
+
+
+  stages {
   stage('branch name') {
       steps {
         script {
@@ -37,14 +41,6 @@ pipeline {
         }
       }
     }
-
-
-  stages {
-   stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
     
     stage('Github') {
       steps {
