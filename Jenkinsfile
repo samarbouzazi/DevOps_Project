@@ -55,6 +55,7 @@ pipeline {
 
         stage('Install') {
             steps {
+              sh 'npm install @popperjs/core --legacy-peer-deps'
                 sh 'npm install --legacy-peer-deps'
             }
         }
