@@ -59,14 +59,14 @@ pipeline {
             }
         }
 
-        // stage('Build') {
-        //     steps {
+        stage('Build') {
+            steps {
                 
-        //         sh 'ng build --configuration=production --output-path=dist'
-        //       //sh 'ng serve --watch --proxy-config proxy.conf.json'
-        //         echo 'Build stage done'
-        //     }
-        // }
+                sh 'ng build --configuration=production --output-path=dist'
+              //sh 'ng serve --watch --proxy-config proxy.conf.json'
+                echo 'Build stage done'
+            }
+        }
 
     stage('Docker Login') {
       steps {
@@ -75,6 +75,13 @@ pipeline {
         }
       }
     }
+
+      stage('Build Docker') {
+      steps {
+            sh "docker build -t $FRONT_TAG ."
+      }
+        }
+      
 
     //  stage('Docker Push') {
     //   steps {
