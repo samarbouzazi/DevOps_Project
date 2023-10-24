@@ -74,11 +74,15 @@ pipeline {
 
         stage('Build Docker') {
       steps {
-            sh "docker-compose up"
-        
+            sh "docker build -t samarbouzezi/devops_project:spring"
       }
-    }
+        }
     
+    stage('docker compose') {
+      steps {
+            sh "docker-compose up "
+      }
+        }
     
     stage('Docker Login') {
       steps {
