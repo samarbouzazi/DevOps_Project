@@ -71,12 +71,11 @@ pipeline {
   }
 }
 
-
-    //     stage('Build Docker') {
-    //   steps {
-    //         sh "docker build -t $BACK_TAG ."
-    //   }
-    //     }
+        stage('Build Docker') {
+      steps {
+            sh "docker build -t $BACK_TAG ."
+      }
+        }
     
     // stage('docker compose') {
     //   steps {
