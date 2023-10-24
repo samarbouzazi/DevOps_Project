@@ -72,17 +72,17 @@ pipeline {
 }
 
 
-        stage('Build Docker') {
-      steps {
-            sh "docker build -t $BACK_TAG ."
-      }
-        }
+    //     stage('Build Docker') {
+    //   steps {
+    //         sh "docker build -t $BACK_TAG ."
+    //   }
+    //     }
     
-    stage('docker compose') {
-      steps {
-            sh "docker-compose up "
-      }
-        }
+    // stage('docker compose') {
+    //   steps {
+    //         sh "docker-compose up "
+    //   }
+    //     }
     
     stage('Docker Login') {
       steps {
