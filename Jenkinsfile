@@ -63,13 +63,13 @@ pipeline {
         echo 'Compile stage done'
       }
     }
-    stage('SonarQube Analysis') {
-  steps {
-    withSonarQubeEnv('sonarqube') {
-      sh 'sonar:sonar'
-    }
-  }
-}
+//     stage('SonarQube Analysis') {
+//   steps {
+//     withSonarQubeEnv('sonarqube') {
+//       sh 'sonar:sonar'
+//     }
+//   }
+// }
 
 
         stage('Build Docker') {
