@@ -74,7 +74,7 @@ pipeline {
 
         stage('Build Docker') {
       steps {
-            sh "docker build -t samarbouzezi/devops_project:spring"
+            sh "sh "docker build -t $BACK_TAG .""
       }
         }
     
