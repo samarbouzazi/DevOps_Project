@@ -65,11 +65,30 @@ pipeline {
     }
     stage('SonarQube Analysis') {
   steps {
-    withSonarQubeEnv('sonar') {
-      sh 'sonar-scanner'
+    withSonarQubeEnv('sonarqube') {
+      sh 'sonar:sonar'
     }
   }
 }
+
+
+        stage('Build Docker') {
+      steps {
+            sh "docker-compose up"
+        }
+      }
+    }
+    
+    
+    stage('Docker Login') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: '10111e92-de88-4dd0-8046-bcb9d0518dd6', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+          sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
+        }
+      }
+    }
+
+  
 
   }
 }
