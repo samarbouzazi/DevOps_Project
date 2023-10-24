@@ -16,9 +16,6 @@
 # Use an official OpenJDK runtime as a parent image
 FROM openjdk:11-jre-slim
 
-USER root
-RUN chmod 755 /var/run/docker.sock
-
 # Set the working directory in the container
 WORKDIR /app
 
