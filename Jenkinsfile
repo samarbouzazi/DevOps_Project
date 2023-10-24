@@ -74,7 +74,7 @@ pipeline {
 
         stage('Build Docker') {
       steps {
-            sh "sh "docker build -t $BACK_TAG .""
+            sh "docker build -t $BACK_TAG ."
       }
         }
     
