@@ -2,12 +2,15 @@ version: "3"
 services:
   mysql-db:
     image: mysql:latest
+    restart: always
     container_name: mysql-db
     ports:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=devops_project_db
+    volumes:
+      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
   spring-boot-app:
   # Add the necessary configuration for your Spring Boot application here
     depends_on:
@@ -15,7 +18,3 @@ services:
     image: samarbouzezi/devops_project:spring
     ports:
       - "8082:8082"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliant
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
