@@ -14,6 +14,10 @@ pipeline {
     BACK_TAG = "${DOCKERHUB_USERNAME}/devops_project:spring"
   }
 
+  tools{
+    jdk 'Jdk1.8'
+  }
+
   parameters {
     string(name: 'BRANCH_NAME', defaultValue: "${scm.branches[0].name}", description: 'Git branch name')
     string(name: 'CHANGE_ID', defaultValue: '', description: 'Git change ID for merge requests')
