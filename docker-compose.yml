@@ -30,7 +30,6 @@ services:
       - MYSQL_DATABASE=devops_project_db
     networks:
       - my-network
-
   spring-boot-app:
     image: samarbouzezi/devops_project:spring
     container_name: devops_project_spring
@@ -53,5 +52,5 @@ services:
   #     - spring-boot-app
   #   networks:
   #     - my-network
-# networks:
-#   my-network:
+networks:
+  my-network:
