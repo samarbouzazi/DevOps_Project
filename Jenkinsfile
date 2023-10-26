@@ -86,27 +86,27 @@ pipeline {
       }
     }
 
-     stage('Docker Push') {
-      steps {
-        sh "docker push ${BACK_TAG}"
-      }
-    }
+    //  stage('Docker Push') {
+    //   steps {
+    //     sh "docker push ${BACK_TAG}"
+    //   }
+    // }
 
 
-    stage('Remove Containers') {
-      steps {
-        sh '''
-        container_ids=$(docker ps -q --filter "publish=8082/tcp")
-        if [ -n "$container_ids" ]; then
-          echo "Stopping and removing containers..."
-          docker stop $container_ids
-          docker rm $container_ids
-        else
-          echo "No containers found using port 8082."
-        fi
-        '''
-      }
-    }
+    // stage('Remove Containers') {
+    //   steps {
+    //     sh '''
+    //     container_ids=$(docker ps -q --filter "publish=8082/tcp")
+    //     if [ -n "$container_ids" ]; then
+    //       echo "Stopping and removing containers..."
+    //       docker stop $container_ids
+    //       docker rm $container_ids
+    //     else
+    //       echo "No containers found using port 8082."
+    //     fi
+    //     '''
+    //   }
+    // }
 
       stage('docker compose') {
       steps {
