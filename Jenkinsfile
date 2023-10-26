@@ -78,6 +78,11 @@ pipeline {
 
     
     stage('SonarQube Analysis') {
+      tools {
+                // Define a tool named 'Java8' in your Jenkins configuration
+                // that points to your Java 8 installation.
+                jdk 'JAVA_HOME'
+            }
   steps {
     withSonarQubeEnv('sonar-scanner') {
       sh 'mvn sonar:sonar'
