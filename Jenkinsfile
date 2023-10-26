@@ -54,12 +54,13 @@ pipeline {
       }
     }
 
-    stage('MVN BUILD') {
+    stage('JUNIT TEST') {
       steps {
-        sh 'mvn clean install'
-        echo 'Build stage done'
+        sh 'mvn test'
+        echo 'Test stage done'
       }
     }
+
       
     stage('MVN COMPILE') {
       steps {
@@ -67,6 +68,15 @@ pipeline {
         echo 'Compile stage done'
       }
     }
+
+    stage('MVN BUILD') {
+      steps {
+        sh 'mvn clean install'
+        echo 'Build stage done'
+      }
+    }
+
+    
     stage('SonarQube Analysis') {
   steps {
     withSonarQubeEnv('sonar-scanner') {
