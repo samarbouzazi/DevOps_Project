@@ -33,7 +33,7 @@ version: '3'
 services:
   mysql-db:
     image: mysql:5.7
-    container_name: devops_db
+    container_name: devops-db
     ports:
       - "3306:3306"
     environment:
@@ -51,7 +51,7 @@ services:
     depends_on:
       - mysql-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-compose-mysql-db:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_URL=jdbc:mysql://devops-db:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
     networks:
