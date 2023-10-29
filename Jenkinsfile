@@ -50,6 +50,7 @@ pipeline {
             steps {
                 sh 'rm -rf node_modules'
                 sh 'npm cache clean --force'
+                sh'npm cache clean -f'
             }
         }
 
