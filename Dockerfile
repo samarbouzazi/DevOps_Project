@@ -1,5 +1,5 @@
 # Build Stage
-FROM node:18 AS build
+FROM node:16 AS build
 
 WORKDIR /app
 COPY package*.json /app/
@@ -8,7 +8,7 @@ COPY package*.json /app/
 RUN npm install -g @angular/cli
 
 # Install dependencies
-RUN npm install --legacy-peer-deps --verbose
+RUN npm install --legacy-peer-deps
 
 COPY ./ /app/
 
