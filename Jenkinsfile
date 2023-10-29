@@ -46,37 +46,37 @@ pipeline {
       }
     }
 
-    //   stage('Clean') {
-    //         steps {
-    //             sh 'rm -rf node_modules'
-    //             sh 'npm cache clean --force'
-    //             sh'npm cache clean -f'
-    //         }
-    //     }
+      stage('Clean') {
+            steps {
+                sh 'rm -rf node_modules'
+                sh 'npm cache clean --force'
+                sh'npm cache clean -f'
+            }
+        }
 
-    //     stage('Install') {
-    //         steps {
-    //           sh 'npm install @popperjs/core --legacy-peer-deps'
-    //             sh 'npm install --legacy-peer-deps'
-    //         }
-    //     }
+        stage('Install') {
+            steps {
+              sh 'npm install @popperjs/core --legacy-peer-deps'
+                sh 'npm install --legacy-peer-deps'
+            }
+        }
 
-    //     stage('Build') {
-    //         steps {
+        stage('Build') {
+            steps {
                 
-    //             sh 'ng build --configuration=production --output-path=dist'
-    //           //sh 'ng serve --watch --proxy-config proxy.conf.json'
-    //             echo 'Build stage done'
-    //         }
-    //     }
+                sh 'ng build --configuration=production --output-path=dist'
+              //sh 'ng serve --watch --proxy-config proxy.conf.json'
+                echo 'Build stage done'
+            }
+        }
 
-    // stage('Docker Login') {
-    //   steps {
-    //     withCredentials([usernamePassword(credentialsId: 'dockercred', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-    //       sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-    //     }
-    //   }
-    // }
+    stage('Docker Login') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockercred', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+          sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
+        }
+      }
+    }
 
       stage('Build Docker') {
       steps {
