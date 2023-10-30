@@ -127,11 +127,11 @@ pipeline {
     //   }
     // }
 
-      stage('docker compose') {
-      steps {
-            sh "docker-compose up "
-      }
-        }
+      // stage('docker compose') {
+      // steps {
+      //       sh "docker-compose up "
+      // }
+      //   }
 
   }
 }
