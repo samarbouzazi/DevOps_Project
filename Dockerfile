@@ -26,34 +26,52 @@
 # CMD ["nginx", "-g", "daemon off;"]
 
 
-# Stage 1: Build the Angular Application
-FROM node:16 AS build
+# # Stage 1: Build the Angular Application
+# FROM node:16 AS build
 
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# # Copy package.json and package-lock.json
+# COPY package*.json ./
 
-# Install dependencies
-RUN npm install --legacy-peer-deps
+# # Install dependencies
+# RUN npm install --legacy-peer-deps
 
-# Copy the rest of the application code
+# # Copy the rest of the application code
+# COPY . .
+
+# # Build the Angular app
+# RUN npm run build -- --prod
+
+# # Stage 2: Serve the Application with Nginx
+# FROM nginx:alpine
+
+# # Remove default Nginx website
+# RUN rm -rf /usr/share/nginx/html/*
+
+# # Copy the Angular app from the previous build stage
+# COPY --from=build /usr/src/app/dist/SummerWorkshop_Angular /usr/share/nginx/html
+
+# # Expose port 4200
+# EXPOSE 4200
+
+# # Start Nginx
+# CMD ["nginx", "-g", "daemon off;"]
+
+FROM node:16
+
+WORKDIR /app
+
+COPY package.json .
+RUN npm install
+
 COPY . .
+RUN npm run build --prod
 
-# Build the Angular app
-RUN npm run build -- --prod
+FROM nginx:latest
 
-# Stage 2: Serve the Application with Nginx
-FROM nginx:alpine
+COPY dist /usr/share/nginx/html
 
-# Remove default Nginx website
-RUN rm -rf /usr/share/nginx/html/*
+EXPOSE 4200
 
-# Copy the Angular app from the previous build stage
-COPY --from=build /usr/src/app/dist/SummerWorkshop_Angular /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
