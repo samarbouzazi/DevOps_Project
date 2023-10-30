@@ -90,6 +90,13 @@ pipeline {
   }
 }
 
+    stage ('NEXUS DEPLOY') {
+       steps {
+         sh 'mvn deploy -DskipTests'
+       }
+    }
+
+
         stage('Build Docker') {
       steps {
             sh "docker build -t $BACK_TAG ."
