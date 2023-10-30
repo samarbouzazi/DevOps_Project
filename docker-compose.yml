@@ -27,8 +27,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=
     networks:
       - my-network
-      
-    angular-app:
+  angular-app:
     image: samarbouzezi/devops_project:angular
     container_name: devops_project_angular
     ports:
