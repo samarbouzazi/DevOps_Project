@@ -37,7 +37,7 @@ class InvoiceServiceImplTest {
    @Test
 @DatabaseSetup("/data-set/invoice-data.xml")
 void retrieveAllInvoices() {
-    final List<List<Invoice>> allInvoices = this.invoiceService.retrieveAllInvoices();
+    final List<Invoice> allInvoices = this.invoiceService.retrieveAllInvoices();
     assertEquals(1, allInvoices.size());
 }
     @Test
