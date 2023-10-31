@@ -34,13 +34,12 @@ class InvoiceServiceImplTest {
     private OperatorServiceImpl operatorService;
     @Autowired
     private SupplierServiceImpl supplierService;
-    @Test
-    @DatabaseSetup("/data-set/invoice-data.xml")
-    void retrieveAllInvoices() {
-            final List<Invoice> AllInvoices = this.invoiceService.retrieveAllInvoices();
-            assertEquals(1, AllInvoices.size());
-    }
-
+   @Test
+@DatabaseSetup("/data-set/invoice-data.xml")
+void retrieveAllInvoices() {
+    final List<List<Invoice>> allInvoices = this.invoiceService.retrieveAllInvoices();
+    assertEquals(1, allInvoices.size());
+}
     @Test
     @DatabaseSetup("/data-set/invoice-data.xml")
     void cancelInvoice() {
