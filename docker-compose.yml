@@ -32,6 +32,7 @@ services:
     container_name: devops_project_angular
     ports:
       - "4200:80"
+    restart: always
     depends_on:
       - spring-boot-app
     networks:
