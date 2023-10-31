@@ -35,11 +35,12 @@ class InvoiceServiceImplTest {
     @Autowired
     private SupplierServiceImpl supplierService;
    @Test
-@DatabaseSetup("/data-set/invoice-data.xml")
-void retrieveAllInvoices() {
-    final List<Invoice> allInvoices = this.invoiceService.retrieveAllInvoices();
-    assertEquals(1, allInvoices.size());
-}
+   @DatabaseSetup("/data-set/invoice-data.xml")
+   void retrieveAllInvoices() {
+        final List<List<Invoice>> allInvoices = this.invoiceService.retrieveAllInvoices();
+        assertEquals(1, allInvoices.size());
+    }
+        
     @Test
     @DatabaseSetup("/data-set/invoice-data.xml")
     void cancelInvoice() {
@@ -68,8 +69,8 @@ void retrieveAllInvoices() {
     void assignOperatorToInvoice() {
         final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
         final Operator operateur = this.operatorService.retrieveOperator(1L);
-        invoiceService.assignOperatorToInvoice(operateur.getIdOperateur(),invoice.getIdInvoice());
-    }
+             invoiceService.assignOperatorToInvoice(operateur.getIdOperateur(), invoice.getIdInvoice());
+}
 
     @Test
     @DatabaseSetup("/data-set/invoice-data.xml")
