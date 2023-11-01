@@ -90,6 +90,13 @@ pipeline {
   }
 }
 
+     stage ('Jacoco Report') {
+       steps {
+         sh 'mvn jacoco.report'
+       }
+    }
+
+
     stage ('NEXUS DEPLOY') {
        steps {
          sh 'mvn deploy -DskipTests'
