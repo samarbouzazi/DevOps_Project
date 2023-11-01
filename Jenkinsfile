@@ -92,7 +92,7 @@ pipeline {
 
      stage ('Jacoco Report') {
        steps {
-         sh 'mvn jacoco.report'
+         sh 'mvn jacoco:report'
        }
     }
 
