@@ -54,9 +54,15 @@ pipeline {
       }
     }
 
-    stage('JUNIT TEST') {
+     stage('Collect JaCoCo Coverage') {
+            steps{
+                   jacoco(execPattern: '**/target/jacoco.exec')
+    }
+        }
+
+    stage('JUNIT TEST with JaCoCo') {
       steps {
-        sh 'mvn test'
+        sh 'mvn test jacoco:report'
         echo 'Test stage done'
       }
     }
@@ -95,6 +101,7 @@ pipeline {
          sh 'mvn jacoco:report'
        }
     }
+
 
 
     stage ('NEXUS DEPLOY') {
