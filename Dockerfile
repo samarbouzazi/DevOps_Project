@@ -39,7 +39,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn package
 
 # Stage 2: Create the runtime container
 FROM openjdk:8-jre-slim
-EXPOSE 8088
+EXPOSE 8082
 # Install curl in the container
 
 RUN apt-get update && apt-get install -y curl
