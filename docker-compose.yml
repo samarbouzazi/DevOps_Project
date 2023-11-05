@@ -45,9 +45,6 @@ services:
   mysql-db:
     image: mysql:latest
     container_name: devops-db
-
-    command: bash -c "if [ ! -e /var/lib/mysql/mydatabase ]; then mysql -u root -e 'CREATE DATABASE mydatabase'; fi"
-
     ports:
       - "3308:3306"
     restart: always
