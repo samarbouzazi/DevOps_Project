@@ -46,7 +46,7 @@ services:
     image: mysql:latest
     container_name: devops-db
     ports:
-      - "3308:3306"
+      - "3306:3306"
     restart: always
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
@@ -66,7 +66,7 @@ services:
     depends_on:
       - mysql-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3308/mydatabase?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/mydatabase?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
     networks:
