@@ -46,9 +46,9 @@ RUN apt-get update && apt-get install -y curl
 
 # Download the .jar file from Nexus and copy it to the container
 
-ARG NEXUS_URL="http://192.168.153.128:8081/repository/maven-releases/"
+ARG NEXUS_URL="http://192.168.153.128:8081/#browse/browse:maven-releases/"
 
-ARG ARTIFACT_PATH="tn/esprit/DevOps_Project/1.0/DevOps_Project-1.0.jar"
+ARG ARTIFACT_PATH="	tn/esprit/DevOps_Project/1.0/DevOps_Project-1.0.jar"
 
 RUN curl -o /DevOps_Project-1.0.jar ${NEXUS_URL}${ARTIFACT_PATH}
 
