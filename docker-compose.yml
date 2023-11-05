@@ -29,6 +29,11 @@ services:
     networks:
       - my-network
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://192.168.153.128:8082/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   angular-app:
     image: samarbouzezi/devops_project:angular
