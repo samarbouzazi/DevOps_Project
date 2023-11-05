@@ -1,41 +1,141 @@
-version: '3'
+# version: '3'
+# services:
+#   mysql-db:
+#     image: mysql:latest
+#     container_name: devops-db
+#     ports:
+#       - "3306:3306"
+#     restart: always
+#     environment:
+#       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+#       - MYSQL_DATABASE=devops_project_db
+#     volumes:
+#       - ./data.sql:/docker-entrypoint-initdb.d/data.sql
+#     networks:
+#       - my-network
+#   spring-boot-app:
+#     image: samarbouzezi/devops_project:spring
+#     container_name: devops_project_spring
+#     ports:
+#       - "8082:8082"
+#     restart: always
+#     depends_on:
+#       - mysql-db
+#     environment:
+#       - SPRING_DATASOURCE_URL=jdbc:mysql://devops-db:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+#       - SPRING_DATASOURCE_USERNAME=root
+#       - SPRING_DATASOURCE_PASSWORD=
+#     networks:
+#       - my-network
+#   angular-app:
+#     image: samarbouzezi/devops_project:angular
+#     container_name: devops_project_angular
+#     ports:
+#       - "4200:80"
+#     restart: always
+#     depends_on:
+#       - spring-boot-app
+#     networks:
+#       - my-network
+# networks:
+#   my-network:
+version: "3"
+
 services:
   mysql-db:
     image: mysql:latest
     container_name: devops-db
-    ports:
-      - "3306:3306"
-    restart: always
-    environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=devops_project_db
-    volumes:
-      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
-    networks:
-      - my-network
+
+    # Check if container exists before creating
+    if [ $(docker ps -q -f name=devops-db) ]; then
+      echo "Container devops-db already exists, skipping creation..."
+    else
+      # Create container if it doesn't exist
+      ports:
+        - "3308:3306"
+      restart: always
+      environment:
+        - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+        - MYSQL_DATABASE=devops_project_db
+      volumes:
+        - ./data.sql:/docker-entrypoint-initdb.d/data.sql
+      networks:
+        - my-network
+    fi
+
   spring-boot-app:
     image: samarbouzezi/devops_project:spring
     container_name: devops_project_spring
-    ports:
-      - "8082:8082"
-    restart: always
-    depends_on:
-      - mysql-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://devops-db:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=
-    networks:
-      - my-network
+
+    # Check if container exists before creating
+    if [ $(docker ps -q -f name=devops_project_spring) ]; then
+      echo "Container devops_project_spring already exists, skipping creation..."
+    else
+      # Create container if it doesn't exist
+      ports:
+        - "8088:8082"
+      restart: always
+      depends_on:
+        - mysql-db
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://devops-db:3306/devops_project_db?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=
+      networks:
+        - my-network
+    fi
+
   angular-app:
     image: samarbouzezi/devops_project:angular
     container_name: devops_project_angular
-    ports:
-      - "4200:80"
-    restart: always
-    depends_on:
-      - spring-boot-app
-    networks:
-      - my-network
+
+    # Check if container exists before creating
+    if [ $(docker ps -q -f name=devops_project_angular) ]; then
+      echo "Container devops_project_angular already exists, skipping creation..."
+    else
+      # Create container if it doesn't exist
+      ports:
+        - "4208:80"
+      restart: always
+      depends_on:
+        - spring-boot-app
+      networks:
+        - my-network
+    fi
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+
+    # Check if container exists before creating
+    if [ $(docker ps -q -f name=prometheus) ]; then
+      echo "Container prometheus already exists, skipping creation..."
+    else
+      # Create container if it doesn't exist
+      ports:
+        - "9098:9090"
+      restart: always
+      networks:
+        - my-network
+      # Exec command to append content to prometheus.yml
+      command: ["sh", "-c", "tee -a /etc/prometheus/prometheus.yml <<EOF\n- job_name: jenkins\nmetrics_path: /prometheus\nstatic_configs:\n- targets: ['192.168.153.128:8080']\nEOF"]
+    fi
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+
+    # Check if container exists before creating
+    if [ $(docker ps -q -f name=grafana) ]; then
+      echo "Container grafana already exists, skipping creation..."
+    else
+      # Create container if it doesn't exist
+      ports:
+        - "3008:3000"
+      restart: always
+      networks:
+        - my-network
+    fi
+
 networks:
   my-network:
