@@ -61,7 +61,7 @@ services:
     container_name: devops_project_spring
 
     ports:
-      - "8088:8082"
+      - "8088:8088"
     restart: always
     depends_on:
       - mysql-db
