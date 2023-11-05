@@ -153,23 +153,7 @@ pipeline {
             sh "docker-compose up "
       }
         }
-       stage('Send Email Notification') {
-            steps {
-                script {
-                    def contenuReadMe = readFile('README.md')
-                    
-                    def subject = 'New Project Commit -m testmallouka'
-                    def body = "A new commit has been made to the repository..\n\n${contenuReadMe}"
-                    def to = 'devopstesthassine@gmail.com'
-                    
-                    mail(
-                        subject: subject,
-                        body: body,
-                        to: to,
-                    )
-                }
-            }
-    
+      
 
   }
 }
