@@ -28,6 +28,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=
     networks:
       - my-network
+    restart: always
 
   angular-app:
     image: samarbouzezi/devops_project:angular
