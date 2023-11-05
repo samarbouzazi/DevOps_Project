@@ -6,7 +6,6 @@ services:
     container_name: devops-db
     ports:
       - "3306:3306"
-    restart: always
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=mydatabase
@@ -21,7 +20,6 @@ services:
 
     ports:
       - "8088:8082"
-    restart: always
     depends_on:
       - mysql-db
     environment:
@@ -37,7 +35,6 @@ services:
 
     ports:
       - "4208:80"
-    restart: always
     depends_on:
       - spring-boot-app
     networks:
