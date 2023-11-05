@@ -13,6 +13,7 @@ services:
       - ./data.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
       - my-network
+    restart: on-failure
 
   spring-boot-app:
     image: samarbouzezi/devops_project:spring
@@ -28,12 +29,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=
     networks:
       - my-network
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://192.168.153.128:8082/healthz"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    restart: on-failure
 
   angular-app:
     image: samarbouzezi/devops_project:angular
