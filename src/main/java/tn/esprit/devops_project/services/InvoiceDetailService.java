@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tn.esprit.devops_project.entities.Invoice;
+import tn.esprit.devops_project.entities.InvoiceDetail;
 import tn.esprit.devops_project.entities.Operator;
 import tn.esprit.devops_project.entities.Supplier;
 import tn.esprit.devops_project.repositories.InvoiceDetailRepository;
@@ -11,6 +12,7 @@ import tn.esprit.devops_project.repositories.InvoiceRepository;
 import tn.esprit.devops_project.repositories.OperatorRepository;
 import tn.esprit.devops_project.repositories.SupplierRepository;
 import tn.esprit.devops_project.services.Iservices.IInvoiceService;
+
 
 import java.util.Date;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class InvoiceDetailService {
 
+	
 
 	final InvoiceDetailRepository invoiceDetailRepository;
 
