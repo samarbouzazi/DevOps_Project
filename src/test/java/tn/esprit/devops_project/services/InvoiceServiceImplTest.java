@@ -174,13 +174,18 @@ public void assignOperatorToInvoice(Long idOperator, Long idInvoice) {
 
     // Write similar tests for the remaining methods.
 
-    @Test
-    public void testGetTotalAmountInvoiceBetweenDates() {
-        Date startDate = new Date(2023-11-01);
-        Date endDate = new Date(2023-11-05);
-        float totalAmount = invoiceRepository.getTotalAmountInvoiceBetweenDates(startDate, endDate);
-        assertEquals(200, totalAmount);
-    }
+@Test
+public void testGetTotalAmountInvoiceBetweenDates() {
+    Date startDate = new Date(123, 10, 1); // Adjust year, month, and day as needed
+    Date endDate = new Date(123, 10, 5);   // Adjust year, month, and day as needed
+
+    // Mock the behavior of invoiceRepository.getTotalAmountInvoiceBetweenDates
+    when(invoiceRepository.getTotalAmountInvoiceBetweenDates(startDate, endDate)).thenReturn(200f);
+
+    float totalAmount = invoiceService.getTotalAmountInvoiceBetweenDates(startDate, endDate);
+    assertEquals(200f, totalAmount, 0.01); // Adjust the delta value as needed
+}
+
 }
 
 
