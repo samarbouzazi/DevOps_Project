@@ -85,13 +85,28 @@ class InvoiceServiceImplTest {
         assertEquals(expectedTotalAmount, totalAmount, 0.01f); 
     }
 
-@Test
-@DatabaseSetup({"/data-set/supplier-data.xml", "/data-set/invoice-data.xml"})
-void getInvoicesBySupplier() {
-    final Supplier supplier = this.supplierService.retrieveSupplier(1L);
-    final List<Invoice> AllInvoice = this.invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
-    assertEquals(1, AllInvoice.size());
+    @Test
+    void getInvoicesBySupplier() {
+    // Create a sample supplier
+    Supplier supplier = new Supplier();
+    supplier.setIdSupplier(1L);
+
+    // Create a sample invoice and associate it with the supplier
+    Invoice invoice = new Invoice();
+    invoice.setSupplier(supplier);
+
+    // Save the entities
+    supplierService.saveSupplier(supplier);
+    invoiceService.saveInvoice(invoice);
+
+    // Get the invoices by supplier
+    List<Invoice> invoices = invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
+
+    // Assert that the list of invoices is not null and contains the expected number of invoices
+    assertNotNull(invoices);
+    assertEquals(1, invoices.size()); // Adjust the expected size as needed
 }
+
 
 
 }
