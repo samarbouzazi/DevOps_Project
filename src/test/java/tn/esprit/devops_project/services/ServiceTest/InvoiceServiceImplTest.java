@@ -39,6 +39,10 @@ public class InvoiceServiceImplTest {
     @InjectMocks
     OperatorServiceImpl operatorService;
 
+    @Mock
+    ProductService productService;
+
+
     @Test
     public void retrieveAllInvoicesTest() {
         when(invoiceRepository.findAll()).thenReturn(
@@ -107,7 +111,7 @@ public class InvoiceServiceImplTest {
 
         float totalAmount = invoiceService.getTotalAmountInvoiceBetweenDates(startDate, endDate);
 
-        assertEquals(500.0f, totalAmount);
+        assertEquals((float) 500.0, totalAmount, 0.01);
     }
 
     @Test
@@ -196,7 +200,7 @@ public void testCreateInvoiceDetailWithExistingProduct() {
     invoiceDetailService.createInvoiceDetailWithExistingProduct(invoiceDetail, 1L);
 
     // Verify that the invoice detail repository was called to save the invoice detail
-    verify(invoiceRepository).save(invoiceDetail);
+    verify(invoiceRepository).save((Invoice)invoiceDetail);
 }
 
     @Test
@@ -220,7 +224,7 @@ public void testUpdateInvoiceDetailQuantity() {
     @Test
 public void testCalculateInvoiceDetailTotalPrice() {
     // Create a mock invoice detail
-    InvoiceDetail invoiceDetail = new InvoiceDetail();
+    InvoiceDetail invoiceDetail = new InvoiceDetail(1L, 2, 10.00);
     invoiceDetail.setQuantity(1);
     invoiceDetail.setPrice(10.00);
 
