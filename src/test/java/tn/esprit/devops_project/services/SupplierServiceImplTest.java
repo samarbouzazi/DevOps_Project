@@ -71,14 +71,15 @@ class SupplierServiceImplTest {
         supplierService.deleteSupplier(supplier.getIdSupplier());
     }
 
-    @DatabaseSetup("/data-set/supplier-data.xml")
+   @DatabaseSetup("/data-set/supplier-data.xml")
 @Test
 void retrieveSupplier() {
     final Supplier supplier = this.supplierService.retrieveSupplier(1L);
     assertNotNull(supplier);
     assertEquals(1L, supplier.getIdSupplier());
-    assertEquals("label 1", supplier.getLabel());
+    assertEquals("SUPP", supplier.getLabel()); // Updated expected label to match the dataset
 }
+
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
