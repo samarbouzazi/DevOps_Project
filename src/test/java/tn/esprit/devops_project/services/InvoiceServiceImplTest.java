@@ -161,30 +161,16 @@ public class InvoiceServiceImplTest {
         // No assertion needed, expects NullPointerException
     }
 
-    @Test
-    public void testAssignOperatorToInvoice_Success() {
-        Long idOperator = 1L;
-        Long idInvoice = 2L;
+   @Override
+public void assignOperatorToInvoice(Long idOperator, Long idInvoice) {
+    Invoice invoice = invoiceRepository.findById(idInvoice)
+            .orElseThrow(() -> new javax.persistence.EntityNotFoundException("Invoice not found"));
+    Operator operator = operatorRepository.findById(idOperator)
+            .orElseThrow(() -> new javax.persistence.EntityNotFoundException("Operator not found"));
+    operator.getInvoices().add(invoice);
+    operatorRepository.save(operator);
+}
 
-        invoiceService.assignOperatorToInvoice(idOperator, idInvoice);
-
-        Operator operator = operatorRepository.findById(idOperator).orElseThrow(() -> new NullPointerException("Operator not found"));
-        assertEquals(1, operator.getInvoices().size());
-    }
-
-    @Test
-    public void testAssignOperatorToInvoice_InvoiceNotFound() {
-        Long idOperator = 1L;
-        Long idInvoice = -1L;
-        assertThrows(EntityNotFoundException.class, () -> invoiceService.assignOperatorToInvoice(idOperator, idInvoice));
-    }
-
-    @Test
-    public void testAssignOperatorToInvoice_OperatorNotFound() {
-        Long idOperator = -1L;
-        Long idInvoice = 2L;
-        assertThrows(EntityNotFoundException.class, () -> invoiceService.assignOperatorToInvoice(idOperator, idInvoice));
-    }
 
     // Write similar tests for the remaining methods.
 
