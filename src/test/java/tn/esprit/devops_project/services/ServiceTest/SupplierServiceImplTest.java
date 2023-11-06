@@ -44,14 +44,14 @@ class SupplierServiceImplTest {
     void addSupplier() {
 
         Supplier supplier = new Supplier();
-        supplier.setLabel("hamma");
+        supplier.setLabel("label1");
         supplierService.addSupplier(supplier);
 
         final List<Supplier> AllSuppliers = this.supplierService.retrieveAllSuppliers();
         assertEquals(2,AllSuppliers.size());
 
         final Supplier addedSupplier = this.supplierService.retrieveSupplier(2L);
-        assertEquals("hamma", addedSupplier.getLabel());
+        assertEquals("label1", addedSupplier.getLabel());
     }
 
     @Test
@@ -77,7 +77,7 @@ void retrieveSupplier() {
     final Supplier supplier = this.supplierService.retrieveSupplier(1L);
     assertNotNull(supplier);
     assertEquals(1L, supplier.getIdSupplier());
-    assertEquals("SUPP", supplier.getLabel()); // Updated expected label to match the dataset
+    assertEquals("ORDINAIRE", supplier.getLabel()); // Updated expected label to match the dataset
 }
 
 
