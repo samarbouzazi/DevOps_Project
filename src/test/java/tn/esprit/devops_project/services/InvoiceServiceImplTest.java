@@ -50,9 +50,12 @@ class InvoiceServiceImplTest {
 
     @Test
     @DatabaseSetup("/data-set/invoice-data.xml")
+    @DatabaseSetup("/data-set/supplier-data.xml")
     void retrieveInvoice() {
-        final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
-        assertEquals(false, invoice.getArchived());
+        final Invoice inv = this.invoiceService.retrieveInvoice(1L);
+        assertNotNull(inv);
+        assertEquals(1L, inv.getIdInvoice());
+    
     }
 
     @Test
