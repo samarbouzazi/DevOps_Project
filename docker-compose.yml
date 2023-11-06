@@ -1,67 +1,75 @@
 version: "3"
 
 services:
-  mysql-db:
-    image: mysql:latest
-    container_name: devops-db
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=mydatabase
-    volumes:
-      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
-    networks:
-      - my-network
-    restart: on-failure
-
-  spring-boot-app:
-    image: samarbouzezi/devops_project:spring
-    container_name: devops_project_spring
-
-    ports:
-      - "8088:8082"
-    depends_on:
-      - mysql-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/mydatabase?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=
-    networks:
-      - my-network
-    restart: on-failure
-
-  angular-app:
-    image: samarbouzezi/devops_project:angular
-    container_name: devops_project_angular
-
-    ports:
-      - "4208:80"
-    depends_on:
-      - spring-boot-app
-    networks:
-      - my-network
-
-  # prometheus:
-  #   image: prom/prometheus
-  #   container_name: prometheus
-
+  # mysql-db:
+  #   image: mysql:latest
+  #   container_name: devops-db
   #   ports:
-  #     - "9098:9090"
-  #   restart: always
+  #     - "3306:3306"
+  #   environment:
+  #     - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+  #     - MYSQL_DATABASE=mydatabase
+  #   volumes:
+  #     - ./data.sql:/docker-entrypoint-initdb.d/data.sql
   #   networks:
   #     - my-network
-  #   command: ["sh", "-c", "tee -a /etc/prometheus/prometheus.yml <<EOF\n- job_name: jenkins\n  metrics_path: /prometheus\n  static_configs:\n    - targets: ['192.168.153.128:8080']\nEOF"]
+  #   restart: on-failure
 
-  # grafana:
-  #   image: grafana/grafana
-  #   container_name: grafana
+  # spring-boot-app:
+  #   image: samarbouzezi/devops_project:spring
+  #   container_name: devops_project_spring
 
   #   ports:
-  #     - "3008:3000"
-  #   restart: always
+  #     - "8088:8082"
+  #   depends_on:
+  #     - mysql-db
+  #   environment:
+  #     - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/mydatabase?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+  #     - SPRING_DATASOURCE_USERNAME=root
+  #     - SPRING_DATASOURCE_PASSWORD=
   #   networks:
   #     - my-network
+  #   restart: on-failure
+
+  # angular-app:
+  #   image: samarbouzezi/devops_project:angular
+  #   container_name: devops_project_angular
+
+  #   ports:
+  #     - "4208:80"
+  #   depends_on:
+  #     - spring-boot-app
+  #   networks:
+  #     - my-network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9098:9090"
+    restart: always
+    networks:
+      - my-network
+    command: 
+      - sh
+      - -c
+      - |
+        tee -a /etc/prometheus/prometheus.yml <<EOF
+        - job_name: jenkins
+          metrics_path: /prometheus
+          static_configs:
+            - targets: ['192.168.153.128:8080']
+        EOF
+  
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+
+    ports:
+      - "3008:3000"
+    restart: always
+    networks:
+      - my-network
 
 networks:
   my-network:
