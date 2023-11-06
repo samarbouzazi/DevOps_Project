@@ -24,8 +24,8 @@ public class SupplierController {
 	}
 
 	@PostMapping("/supplier")
-	public Supplier addSupplier(@RequestBody Supplier supplier) {
-		return supplierService.addSupplier(supplier);
+	public Supplier addSupplier(@RequestBody Supplier supplier11) {
+		return supplierService.addSupplier(supplier11);
 	}
 
 	@DeleteMapping("/supplier/{supplierId}")
