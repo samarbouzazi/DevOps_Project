@@ -56,20 +56,48 @@ public class ProductServiceImplTest {
 
 
 
-    @DatabaseSetup("/data-set/product-data.xml")
-    @DatabaseSetup("/data-set/stock-data.xml")
-    @Test
-    void addProduct() {
-        final Product product = new Product();
-        Stock stock = this.stockService.retrieveStock(1L);
-        product.setStock(stock);
-        // product.setIdProduct(2L);
-        product.setTitle("t2");
-        product.setPrice(2);
-        product.setQuantity(2);
-        product.setCategory(ProductCategory.ELECTRONICS);
-        this.productService.addProduct(product, stock.getIdStock());
-        assertEquals(2, this.productService.retreiveAllProduct().size());
+    // @DatabaseSetup("/data-set/product-data.xml")
+    // @DatabaseSetup("/data-set/stock-data.xml")
+    // @Test
+    // void addProduct() {
+    //     final Product product = new Product();
+    //     Stock stock = this.stockService.retrieveStock(1L);
+    //     product.setStock(stock);
+    //     // product.setIdProduct(2L);
+    //     product.setTitle("t2");
+    //     product.setPrice(2);
+    //     product.setQuantity(2);
+    //     product.setCategory(ProductCategory.ELECTRONICS);
+    //     this.productService.addProduct(product, stock.getIdStock());
+    //     assertEquals(2, this.productService.retreiveAllProduct().size());
+    // }
+
+         @Test
+    public void testAddProduct_WithValidProductAndIdStock_ShouldReturnSavedProduct() {
+        Product product = new Product("t1", "Product Description", 1.0, 1);
+        Long idStock = 1L;
+
+        Stock stock = new Stock(10);
+        Mockito.when(stockRepository.findById(idStock)).thenReturn(Optional.of(stock));
+
+        Product savedProduct = productServiceImpl.addProduct(product, idStock);
+
+        assertEquals("t1", savedProduct.getTitle());
+        assertEquals("Product Description", savedProduct.getDescription());
+        assertEquals(1.0, savedProduct.getPrice(), 0.01);
+        assertEquals(1, savedProduct.getQuantity());
+        assertEquals("ELECTRONICS", savedProduct.getCategory());
+        assertEquals(stock, savedProduct.getStock());
+
+        Mockito.verify(productRepository).save(product);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testAddProduct_WithValidProductAndNullIdStock_ShouldThrowNullPointerException() {
+        Product product = new Product("Product Name", "Product Description", 100.0, 1);
+        Long idStock = null;
+
+        productServiceImpl.addProduct(product, idStock);
     }
 
     @Test
