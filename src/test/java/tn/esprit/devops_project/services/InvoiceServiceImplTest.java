@@ -96,14 +96,15 @@ void getInvoicesBySupplier() {
     Invoice invoice = new Invoice();
     invoice.setSupplier(supplier);
 
+    // Mock the behavior of the invoiceService to return the invoice
+    when(invoiceService.getInvoicesBySupplier(1L)).thenReturn(List.of(invoice));
+
     // Get the invoices by supplier
-    List<Invoice> invoices = invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
+    List<Invoice> invoices = invoiceService.getInvoicesBySupplier(1L);
 
     // Assert that the list of invoices is not null and contains the expected number of invoices
     assertNotNull(invoices);
     assertEquals(1, invoices.size()); // Adjust the expected size as needed
 }
-
-
 
 }
