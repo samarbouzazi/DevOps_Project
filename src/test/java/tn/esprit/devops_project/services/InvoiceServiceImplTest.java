@@ -37,8 +37,8 @@ class InvoiceServiceImplTest {
     @Test
     @DatabaseSetup("/data-set/invoice-data.xml")
     void retrieveAllInvoices() {
-            final List<Invoice> AllInvoices = this.invoiceService.retrieveAllInvoices();
-            assertEquals(1, AllInvoices.size());
+        final List<Invoice> AllInvoices = this.invoiceService.retrieveAllInvoices();
+        assertEquals(1, AllInvoices.size());
     }
 
     @Test
@@ -55,7 +55,7 @@ class InvoiceServiceImplTest {
         final Invoice inv = this.invoiceService.retrieveInvoice(1L);
         assertNotNull(inv);
         assertEquals(1L, inv.getIdInvoice());
-    
+
     }
 
     @Test
@@ -75,24 +75,23 @@ class InvoiceServiceImplTest {
         invoiceService.assignOperatorToInvoice(operateur.getIdOperateur(),invoice.getIdInvoice());
     }
 
-     @Test
+    @Test
     @DatabaseSetup("/data-set/invoice-data.xml")
     void getTotalAmountInvoiceBetweenDates() {
-        // final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
-        // float totalAmount = this.invoiceService.getTotalAmountInvoiceBetweenDates(
-        //         invoice.getDateCreationInvoice(),invoice.getDateLastModificationInvoice());
-        // float expectedTotalAmount = 30.0f;
-        // assertEquals(expectedTotalAmount, totalAmount, 0.01f); // You may adjust the delta (0.01f) as needed
-
+        final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
+        float expectedTotalAmount = 30.0f;
+        float totalAmount = this.invoiceService.getTotalAmountInvoiceBetweenDates(
+                invoice.getDateCreationInvoice(),invoice.getDateLastModificationInvoice());
+        assertEquals(expectedTotalAmount, totalAmount, 0.01f); 
     }
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
     @DatabaseSetup("/data-set/invoice-data.xml")
     void getInvoicesBySupplier() {
-        //final Supplier supplier = this.supplierService.retrieveSupplier(1L);
-       // final List<Invoice> AllInvoice = this.invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
-       // assertEquals(AllInvoice.size(), 0);
+        final Supplier supplier = this.supplierService.retrieveSupplier(1L);
+        final List<Invoice> AllInvoice = this.invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
+        assertEquals(AllInvoice.size(), 1);
     }
 
 }
