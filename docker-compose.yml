@@ -50,16 +50,6 @@ services:
     restart: always
     networks:
       - my-network
-    command: 
-      - sh
-      - -c
-      - |
-        tee -a /etc/prometheus/prometheus.yml <<EOF
-        - job_name: jenkins
-          metrics_path: /prometheus
-          static_configs:
-            - targets: ['192.168.153.128:8080']
-        EOF
   
   grafana:
     image: grafana/grafana
