@@ -85,8 +85,9 @@ class InvoiceServiceImplTest {
         assertEquals(expectedTotalAmount, totalAmount, 0.01f); 
     }
 
-    @Test
-    void getInvoicesBySupplier() {
+   @Test
+@DatabaseSetup({"/data-set/supplier-data.xml", "/data-set/invoice-data.xml"})
+void getInvoicesBySupplier() {
     // Create a sample supplier
     Supplier supplier = new Supplier();
     supplier.setIdSupplier(1L);
@@ -94,10 +95,6 @@ class InvoiceServiceImplTest {
     // Create a sample invoice and associate it with the supplier
     Invoice invoice = new Invoice();
     invoice.setSupplier(supplier);
-
-    // Save the entities
-    supplierService.saveSupplier(supplier);
-    invoiceService.saveInvoice(invoice);
 
     // Get the invoices by supplier
     List<Invoice> invoices = invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
