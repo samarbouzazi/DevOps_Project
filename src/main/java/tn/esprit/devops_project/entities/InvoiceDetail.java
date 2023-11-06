@@ -18,16 +18,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InvoiceDetail implements Serializable {
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long idInvoiceDetail;
-	int quantity;
-	float price;
-	@ManyToOne
-	Product product;
-	@ManyToOne
-	@JsonIgnore
-	Invoice invoice;
-
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long idInvoiceDetail;
+    int quantity;
+    float price;
+    @ManyToOne
+    Product product;
+    @ManyToOne
+    @JsonIgnore
+    Invoice invoice;
+    
+    // Add this method to get the total price
+    public float getTotalPrice() {
+        return this.price * this.quantity;
+    }
 }
