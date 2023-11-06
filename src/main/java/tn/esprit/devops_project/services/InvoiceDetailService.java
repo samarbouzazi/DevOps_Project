@@ -20,7 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 public class InvoiceDetailService {
 
-    private InvoiceDetailRepository invoiceDetailRepository;
+
+	final InvoiceDetailRepository invoiceDetailRepository;
 
     public InvoiceDetailService(invoiceDetailRepository invoiceDetailRepository) {
         this.invoiceDetailRepository = invoiceDetailRepository;
