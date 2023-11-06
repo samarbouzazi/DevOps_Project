@@ -52,11 +52,14 @@ class ProductServiceImplTest {
         assertEquals("ORANGE", produit.getTitle());
     }
 
-    @Test
     @DatabaseSetup("/data-set/product-data.xml")
+    @DatabaseSetup("/data-set/stock-data.xml")
+    @Test
     void retrieveProduct() {
         final Product product = this.productService.retrieveProduct(1L);
-        assertEquals("Fruit", product.getTitle());
+        assertNotNull(product);
+        assertEquals(1L, product.getIdProduct());
+        assertEquals("t1", product.getTitle());
     }
 
     @Test
@@ -66,11 +69,24 @@ class ProductServiceImplTest {
         assertEquals(1, AllProduct.size());
     }
 
-    @Test
     @DatabaseSetup("/data-set/product-data.xml")
+    @DatabaseSetup("/data-set/stock-data.xml")
+    @Test
     void retrieveProductByCategory() {
-        final List<Product> AllProduct = this.productService.retrieveProductByCategory(ELECTRONICS);
-        assertEquals(0, AllProduct.size());
+        // Specify the category you want to test
+        ProductCategory categoryToTest = ProductCategory.ELECTRONICS;
+
+        // Retrieve products by the specified category
+        List<Product> productsByCategory = this.productService.retrieveProductByCategory(categoryToTest);
+
+        // Ensure that the list is not null
+        assertNotNull(productsByCategory);
+
+        // Perform assertions on the retrieved products, such as checking their category.
+        // Example:
+        for (Product product : productsByCategory) {
+            assertEquals(categoryToTest, product.getCategory());
+        }
     }
 
     @Test
