@@ -2,8 +2,8 @@
 <dataset>
     <supplier
             ID_SUPPLIER="1"
-            code="CODE1"
-            label="SUPP"
+            code="c1"
+            label="label 1"
+            SUPPLIER_CATEGORY="ORDINAIRE"
     />
-
 </dataset>
