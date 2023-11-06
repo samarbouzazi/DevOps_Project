@@ -1,41 +1,33 @@
 package tn.esprit.devops_project.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.*;
-import org.mockito.MockitoAnnotations;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
-import tn.esprit.devops_project.entities.Invoice;
-import tn.esprit.devops_project.entities.Operator;
-import tn.esprit.devops_project.entities.Supplier;
-import tn.esprit.devops_project.repositories.InvoiceDetailRepository;
-import tn.esprit.devops_project.repositories.InvoiceRepository;
-import tn.esprit.devops_project.repositories.OperatorRepository;
-import tn.esprit.devops_project.repositories.SupplierRepository;
-import tn.esprit.devops_project.services.InvoiceServiceImpl;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
+import tn.esprit.devops_project.entities.*;
 
-import javax.persistence.EntityNotFoundException;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-//import static org.junit.jupiter.api.Assertions.*;
-
-
-//import org.junit.Assert;
-//import org.junit.Test;
-
-
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@Transactional
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class,
+        DbUnitTestExecutionListener.class})
+@ActiveProfiles("test")
 
 public class InvoiceServiceImplTest {
 
