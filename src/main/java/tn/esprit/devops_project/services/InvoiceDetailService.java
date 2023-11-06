@@ -23,9 +23,6 @@ public class InvoiceDetailService {
 
 	final InvoiceDetailRepository invoiceDetailRepository;
 
-    public InvoiceDetailService(invoiceDetailRepository invoiceDetailRepository) {
-        this.invoiceDetailRepository = invoiceDetailRepository;
-    }
 
     public void createInvoiceDetailWithExistingProduct(InvoiceDetail invoiceDetail, Long productId) {
         // Check if the product exists
