@@ -99,19 +99,19 @@ class ProductServiceImplTest {
 
     }
 
- @Test
-    @DatabaseSetup({"/data-set/product-data.xml", "/data-set/stock-data.xml"})
-    void retrieveProductStock() {
-        // Arrange
-        Long stockId = 1L; // Assuming this is a valid ID in your dataset
+@Test
+@DatabaseSetup({"/data-set/product-data.xml", "/data-set/stock-data.xml"})
+void retrieveProductStock() {
+    // Arrange
+    Long stockId = 1L; // Assuming this is a valid ID in your dataset
 
-        // Act
-        List<Product> products = productService.retrieveProductStock(stockId);
+    // Act
+    List<Product> products = productService.retreiveProductStock(stockId);
 
-        // Assert
-        assertNotNull(products);
-        assertEquals(0, products.size()); // Assuming you expect 0 products
-    }
+    // Assert
+    assertNotNull(products);
+    assertEquals(0, products.size()); // Assuming you expect 0 products
+}
 
 
     @Test
