@@ -54,6 +54,21 @@ pipeline {
       }
     }
 
+    stage('MVN COMPILE') {
+      steps {
+        sh 'mvn compile'
+        echo 'Compile stage done'
+      }
+    }
+
+    stage('MVN BUILD') {
+      steps {
+        sh 'mvn clean install'
+        echo 'Build stage done'
+      }
+    }
+    
+
      stage('Collect JaCoCo Coverage') {
             steps{
                    jacoco(execPattern: '**/target/jacoco.exec')
@@ -68,19 +83,7 @@ pipeline {
     }
 
       
-    stage('MVN COMPILE') {
-      steps {
-        sh 'mvn compile'
-        echo 'Compile stage done'
-      }
-    }
-
-    stage('MVN BUILD') {
-      steps {
-        sh 'mvn clean install'
-        echo 'Build stage done'
-      }
-    }
+    
 
     
     stage('SonarQube Analysis') {
