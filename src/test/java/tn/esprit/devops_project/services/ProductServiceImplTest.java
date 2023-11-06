@@ -53,14 +53,14 @@ class ProductServiceImplTest {
     }
 
     @DatabaseSetup("/data-set/product-data.xml")
-    @DatabaseSetup("/data-set/stock-data.xml")
-    @Test
-    void retrieveProduct() {
-        final Product product = this.productService.retrieveProduct(1L);
-        assertNotNull(product);
-        assertEquals(1L, product.getIdProduct());
-        assertEquals("t1", product.getTitle());
-    }
+@DatabaseSetup("/data-set/stock-data.xml")
+@Test
+void retrieveProduct() {
+    final Product product = this.productService.retrieveProduct(1L);
+    assertNotNull(product);
+    assertEquals(1L, product.getIdProduct());
+    assertEquals("t1", product.getTitle());
+}
 
     @Test
     @DatabaseSetup("/data-set/product-data.xml")
