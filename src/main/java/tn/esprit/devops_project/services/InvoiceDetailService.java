@@ -8,13 +8,14 @@ import tn.esprit.devops_project.exceptions.ProductNotFoundException;
 import tn.esprit.devops_project.repositories.*;
 import tn.esprit.devops_project.services.*;
 
+
 @Service
 @Slf4j
 @AllArgsConstructor
 public class InvoiceDetailService {
 
     private final InvoiceDetailRepository invoiceDetailRepository;
-    private final ProductService productService; // Assuming ProductService interface is used
+    private final ProductServiceImpl productService; // Assuming ProductService interface is used
 
     // Assuming you have ProductService interface with a findById method
     public void createInvoiceDetailWithExistingProduct(InvoiceDetail invoiceDetail, Long productId) {
