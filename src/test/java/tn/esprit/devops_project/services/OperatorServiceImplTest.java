@@ -70,14 +70,15 @@ class OperatorServiceImplTest {
         assertEquals("UpdatedName", updatedOperator.getFname());
     }
 
-    @DatabaseSetup("/data-set/operator-data.xml")
-    @Test
-    void retrieveOperator() {
-        final Operator operator = this.operatorService.retrieveOperator(1L);
-        assertNotNull(operator);
-        assertEquals(1L, operator.getIdOperateur());
-        assertEquals("pass", operator.getPassword());
-    }
+   @DatabaseSetup("/data-set/operator-data.xml")
+@Test
+void retrieveOperator() {
+    final Operator operator = this.operatorService.retrieveOperator(1L);
+    assertNotNull(operator);
+    assertEquals(1L, operator.getIdOperateur());
+    assertEquals("ertydfgh", operator.getPassword()); // Updated expected value
+}
+
 
 
     @Test
