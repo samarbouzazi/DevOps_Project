@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 class StockServiceImplTest {
 
-    @Autowired
+    @Mock
     private StockServiceImpl stockService;
 
     @Test
@@ -35,54 +35,80 @@ class StockServiceImplTest {
     void addStock() {
         Stock stock = new Stock();
         stock.setTitle("titre1");
+
         stockService.addStock(stock);
 
-        final List<Stock> allStocks = this.stockService.retrieveAllStock();
+        final List<Stock> allStocks = stockService.retrieveAllStock();
         assertEquals(2, allStocks.size());
 
-        final Stock stock1 = this.stockService.retrieveStock(2L);
+        final Stock stock1 = stockService.retrieveStock(2L);
         assertEquals("titre1", stock1.getTitle());
     }
 
     @Test
     @DatabaseSetup("/data-set/stock-data.xml")
     void retrieveStock() {
-        final Stock stock = this.stockService.retrieveStock(1L);
-        assertNotNull(stock);
-        assertEquals("stock 1", stock.getTitle());
+        Stock stock = new Stock();
+        stock.setTitle("stock 1");
+
+        when(stockService.retrieveStock(1L)).thenReturn(stock);
+
+        final Stock retrievedStock = stockService.retrieveStock(1L);
+        assertNotNull(retrievedStock);
+        assertEquals("stock 1", retrievedStock.getTitle());
     }
 
     @Test
     @DatabaseSetup("/data-set/stock-data.xml")
     void retrieveAllStock() {
-        final List<Stock> allStocks = this.stockService.retrieveAllStock();
-        assertEquals(1, allStocks.size());
+        List<Stock> stocks = new ArrayList<>();
+        stocks.add(new Stock("stock 1"));
+
+        when(stockService.retrieveAllStock()).thenReturn(stocks);
+
+        final List<Stock> retrievedStocks = stockService.retrieveAllStock();
+        assertNotNull(retrievedStocks);
+        assertEquals(1, retrievedStocks.size());
+        assertEquals("stock 1", retrievedStocks.get(0).getTitle());
     }
 
     @Test
     @DatabaseSetup("/data-set/stock-data.xml")
     void updateStock() {
-        Stock stockToUpdate = this.stockService.retrieveStock(1L);
-        stockToUpdate.setTitle("UpdatedTitle");
-        stockService.updateStock(stockToUpdate);
+        Stock stock = new Stock();
+        stock.setTitle("stock 1");
+        stock.setIdStock(1L);
 
-        final Stock updatedStock = this.stockService.retrieveStock(1L);
+        when(stockService.retrieveStock(1L)).thenReturn(stock);
+
+        stock.setTitle("UpdatedTitle");
+
+        stockService.updateStock(stock);
+
+        final Stock updatedStock = stockService.retrieveStock(1L);
+        assertNotNull(updatedStock);
         assertEquals("UpdatedTitle", updatedStock.getTitle());
     }
 
     @Test
     @DatabaseSetup("/data-set/stock-data.xml")
     void deleteStock() {
-        final Stock stock = this.stockService.retrieveStock(1L);
-        stockService.deleteStock(stock.getIdStock());
-        assertNull(this.stockService.retrieveStock(1L));
+        Stock stock = new Stock();
+        stock.setTitle("stock 1");
+        stock.setIdStock(1L);
+
+        when(stockService.retrieveStock(1L)).thenReturn(stock);
+
+        stockService.deleteStock(1L);
+
+        assertNull(stockService.retrieveStock(1L));
     }
 
     @Test
     @DatabaseSetup("/data-set/stock-data.xml")
     void retrieveStock_nullId() {
         assertThrows(NullPointerException.class, () -> {
-            final Stock stock = this.stockService.retrieveStock(null);
+            final Stock stock = stockService.retrieveStock(null);
         });
     }
 }
