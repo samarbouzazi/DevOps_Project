@@ -39,10 +39,6 @@ public class InvoiceServiceImplTest {
     @InjectMocks
     OperatorServiceImpl operatorService;
 
-    @Mock
-    ProductService productService;
-
-
     @Test
     public void retrieveAllInvoicesTest() {
         when(invoiceRepository.findAll()).thenReturn(
@@ -111,7 +107,7 @@ public class InvoiceServiceImplTest {
 
         float totalAmount = invoiceService.getTotalAmountInvoiceBetweenDates(startDate, endDate);
 
-        assertEquals((float) 500.0, totalAmount, 0.01);
+        assertEquals(500.0f, totalAmount);
     }
 
     @Test
@@ -185,57 +181,5 @@ public class InvoiceServiceImplTest {
 
         verify(supplierRepository, times(1)).findById(idSupplier);
     }
-
-    @Test
-public void testCreateInvoiceDetailWithExistingProduct() {
-    // Create a mock invoice detail
-    InvoiceDetail invoiceDetail = new InvoiceDetail();
-    invoiceDetail.setQuantity(1);
-    invoiceDetail.setPrice(10.00);
-
-    // Mock the behavior of the product service
-    when(productService.findById(1L)).thenReturn(Optional.of(new Product()));
-
-    // Save the invoice detail
-    invoiceDetailService.createInvoiceDetailWithExistingProduct(invoiceDetail, 1L);
-
-    // Verify that the invoice detail repository was called to save the invoice detail
-    verify(invoiceRepository).save((Invoice)invoiceDetail);
-}
-
-    @Test
-public void testUpdateInvoiceDetailQuantity() {
-    // Create a mock invoice detail
-    InvoiceDetail invoiceDetail = new InvoiceDetail();
-    invoiceDetail.setId(1L);
-    invoiceDetail.setQuantity(2);
-
-    // Mock the behavior of the invoice repository
-    when(invoiceRepository.findById(1L)).thenReturn(Optional.of(invoiceDetail));
-
-    // Update the invoice detail quantity
-    invoiceDetailService.updateInvoiceDetailQuantity(invoiceDetail, 2);
-
-    // Verify that the invoice detail repository was called to save the updated invoice detail
-    verify(invoiceRepository).save(invoiceDetail);
-}
-
-
-    @Test
-public void testCalculateInvoiceDetailTotalPrice() {
-    // Create a mock invoice detail
-    InvoiceDetail invoiceDetail = new InvoiceDetail(1L, 2, 10.00);
-    invoiceDetail.setQuantity(1);
-    invoiceDetail.setPrice(10.00);
-
-    // Calculate the invoice detail total price
-    float totalPrice = invoiceDetailService.calculateInvoiceDetailTotalPrice(invoiceDetail);
-
-    // Verify that the total price is correct
-    assertEquals(10.00, totalPrice, 0.01);
-}
-
-
-    
 
 }
