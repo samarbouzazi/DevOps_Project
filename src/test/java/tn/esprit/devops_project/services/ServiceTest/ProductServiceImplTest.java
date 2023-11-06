@@ -1,103 +1,185 @@
 package tn.esprit.devops_project.services.ServiceTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.*;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import tn.esprit.devops_project.entities.Product;
-import tn.esprit.devops_project.entities.ProductCategory;
-import tn.esprit.devops_project.entities.Stock;
-import tn.esprit.devops_project.repositories.ProductRepository;
-import tn.esprit.devops_project.services.ProductServiceImpl;
-import tn.esprit.devops_project.services.StockServiceImpl;
+import tn.esprit.devops_project.entities.*;
+import tn.esprit.devops_project.repositories.*;
+import tn.esprit.devops_project.services.InvoiceServiceImpl;
+import tn.esprit.devops_project.services.OperatorServiceImpl;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@Transactional
-public class ProductServiceImplTest {
-    @Autowired
-    private ProductServiceImpl productService;
-    @Autowired
-    private StockServiceImpl stockService;
+public class InvoiceServiceImplTest {
     @Mock
-    private ProductRepository productRepository;
+    InvoiceRepository invoiceRepository;
+
     @Mock
-    private StockRepository stockRepository;
+    OperatorRepository operatorRepository;
+
+    @Mock
+    SupplierRepository supplierRepository;
+
+    @Mock
+    InvoiceDetailRepository invoiceDetailRepository;
+
+    @InjectMocks
+    InvoiceServiceImpl invoiceService;
+
+    @InjectMocks
+    OperatorServiceImpl operatorService;
 
     @Test
-    public void testAddProduct_WithValidProductAndIdStock_ShouldReturnSavedProduct() {
-        Product product = new Product("t1", "Product Description", 1.0, 1);
-        Long idStock = 1L;
+    public void retrieveAllInvoicesTest() {
+        when(invoiceRepository.findAll()).thenReturn(
+                Arrays.asList(
+                        new Invoice(1L, 10.0f, 100.0f, new Date(), new Date(), false, null, null),
+                        new Invoice(2L, 20.0f, 200.0f, new Date(), new Date(), false, null, null),
+                        new Invoice(3L, 30.0f, 300.0f, new Date(), new Date(), false, null, null)
+                )
+        );
 
-        Stock stock = new Stock(10);
-        Mockito.when(stockRepository.findById(idStock)).thenReturn(Optional.of(stock));
+        List<Invoice> invoiceList = invoiceService.retrieveAllInvoices();
 
-        Product savedProduct = productServiceImpl.addProduct(product, idStock);
-
-        assertEquals("t1", savedProduct.getTitle());
-        assertEquals("Product Description", savedProduct.getDescription());
-        assertEquals(1.0, savedProduct.getPrice(), 0.01);
-        assertEquals(1, savedProduct.getQuantity());
-        assertEquals("ELECTRONICS", savedProduct.getCategory());
-        assertEquals(stock, savedProduct.getStock());
-
-        Mockito.verify(productRepository).save(product);
+        assertEquals(3, invoiceList.size());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testAddProduct_WithValidProductAndNullIdStock_ShouldThrowNullPointerException() {
-        Product product = new Product("Product Name", "Product Description", 100.0, 1);
-        Long idStock = null;
 
-        productServiceImpl.addProduct(product, idStock);
+    @Test
+    public void cancelInvoiceTest() {
+        Invoice invoice = new Invoice(1L, 10.0f, 100.0f, new Date(), new Date(), false, null, null);
+        when(invoiceRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(invoice));
+
+        invoiceService.cancelInvoice(1L);
+
+        verify(invoiceRepository).save(invoice);
     }
 
     @Test
-    public void retrieveProduct() {
-        Long id = 1L;
-        Product product = new Product("t1", "Product Description", 1.0, 1);
+    public void cancelInvoiceNotFoundTest() {
+        // Simulate that the invoice is not found
+        when(invoiceRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Mockito.when(productRepository.findById(id)).thenReturn(Optional.of(product));
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            invoiceService.cancelInvoice(1L);
+        });
+        verify(invoiceRepository).findById(1L);
 
-        Product retrievedProduct = productServiceImpl.retrieveProduct(id);
-
-        assertEquals(id, retrievedProduct.getId());
-        assertEquals("t1", retrievedProduct.getTitle());
-        assertEquals("Product Description", retrievedProduct.getDescription());
-        assertEquals(1.0, retrievedProduct.getPrice(), 0.01);
-        assertEquals(1, retrievedProduct.getQuantity());
-        assertEquals("ELECTRONICS", retrievedProduct.getCategory());
-
-        Mockito.verify(productRepository).findById(id);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void retrieveProduct_NullId() {
-        Exception exception = assertThrows(NullPointerException.class, () -> {
-            final Product product = this.productService.retrieveProduct(100L);
+    @Test
+    public void retrieveInvoiceTest() {
+        Invoice invoice = new Invoice(1L, 10.0f, 100.0f, new Date(), new Date(), false, null, null);
+        when(invoiceRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(invoice));
+
+        Invoice retrievedInvoice = invoiceService.retrieveInvoice(1L);
+
+        assertNotNull(retrievedInvoice);
+        assertEquals(10.0f, retrievedInvoice.getAmountDiscount());
+    }
+
+    @Test
+    public void retrieveInvoiceNotFoundTest() {
+        when(invoiceRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty()); // Simulate not finding the invoice
+
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            invoiceService.retrieveInvoice(1L);
         });
     }
 
+
+
     @Test
-    public void retreiveAllProduct() {
-        List<Product> products = new ArrayList<>();
-        products.add(new Product("Product Name 1", "Product Description 1", 100.0, 1));
-        products.add(new Product("Product Name 2", "Product Description 2", 150.0, 2));
+    public void getTotalAmountInvoiceBetweenDatesTest() {
+        Date startDate = new Date(1634994000000L); // October 23, 2021
+        Date endDate = new Date(1635354000000L);   // October 27, 2021
+        when(invoiceRepository.getTotalAmountInvoiceBetweenDates(startDate, endDate)).thenReturn(500.0f);
 
-        Mockito.when(productRepository.findAll()).thenReturn(products);
+        float totalAmount = invoiceService.getTotalAmountInvoiceBetweenDates(startDate, endDate);
 
-        List<Product> retrievedProducts = productServiceImpl.retreiveAllProduct();
+        assertEquals(500.0f, totalAmount);
+    }
 
-        assertEquals(products.size(), retrievedProducts.size());
-        for (int i = 0; i < retrievedProducts.size(); i++) {
-            assertEquals(products.get(i).getId(), retrieved
+    @Test
+    public void testAssignOperatorToInvoice() {
+        Long idOperator = 1L;
+        Long idInvoice = 1L;
+
+        Operator operator = new Operator(idOperator, "fathi", "hadewi", "fathi123", new HashSet<>());
+        Invoice invoice = new Invoice(idInvoice, 10.0f, 100.0f, new Date(), new Date(), false, null, null);
+
+        when(invoiceRepository.findById(idInvoice)).thenReturn(Optional.of(invoice));
+        when(operatorRepository.findById(idOperator)).thenReturn(Optional.of(operator));
+
+        invoiceService.assignOperatorToInvoice(idOperator, idInvoice);
+
+        Set<Invoice> invoices = operator.getInvoices();
+        assertThat(invoices).contains(invoice);
+    }
+
+    @Test
+    public void assignOperatorToInvoiceInvoiceNotFound() {
+        Long idOperator = 1L;
+        Long idInvoice = 2L;
+
+        when(invoiceRepository.findById(idInvoice)).thenReturn(Optional.empty());
+
+        assertThrows(NullPointerException.class, () -> invoiceService.assignOperatorToInvoice(idOperator, idInvoice));
+    }
+
+    @Test
+    public void assignOperatorToInvoiceOperatorNotFound() {
+        Long idOperator = 1L;
+        Long idInvoice = 2L;
+
+        Invoice invoice = new Invoice();
+        invoice.setIdInvoice(idInvoice);
+
+        when(invoiceRepository.findById(idInvoice)).thenReturn(Optional.of(invoice));
+        when(operatorRepository.findById(idOperator)).thenReturn(Optional.empty());
+
+        assertThrows(NullPointerException.class, () -> invoiceService.assignOperatorToInvoice(idOperator, idInvoice));
+    }
+    /*
+        @Test
+        public void getInvoicesBySupplier_SupplierFound() {
+            Long idSupplier = 1L;
+            Supplier supplier = new Supplier(idSupplier, "Code1", "label1", SupplierCategory.CONVENTIONNE, new HashSet<>(), null);
+            Invoice invoice = new Invoice(1L, 10.0f, 100.0f, new Date(), new Date(), false, null, supplier);
+
+            // Add the invoice to the supplier's HashSet
+            supplier.getInvoices().add(invoice);
+
+            when(supplierRepository.findById(idSupplier)).thenReturn(Optional.of(supplier));
+
+            // Call the service method
+            List<Invoice> invoices = invoiceService.getInvoicesBySupplier(idSupplier);
+
+            verify(supplierRepository, times(1)).findById(idSupplier);
+
+            // Assert that the List contains the invoice
+            assertThat(invoices).contains(invoice);
+        }
+    */
+    @Test
+    public void getInvoicesBySupplierNotFound() {
+        Long idSupplier = 1L;
+
+        when(supplierRepository.findById(idSupplier)).thenReturn(Optional.empty());
+
+        assertThrows(NullPointerException.class, () -> invoiceService.getInvoicesBySupplier(idSupplier));
+
+        verify(supplierRepository, times(1)).findById(idSupplier);
+    }
+
+}
