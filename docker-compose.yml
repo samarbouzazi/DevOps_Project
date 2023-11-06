@@ -15,21 +15,21 @@ services:
   #     - my-network
   #   restart: on-failure
 
-  # spring-boot-app:
-  #   image: samarbouzezi/devops_project:spring
-  #   container_name: devops_project_spring
+  spring-boot-app:
+    image: samarbouzezi/devops_project:spring
+    container_name: devops_project_spring
 
-  #   ports:
-  #     - "8088:8082"
-  #   depends_on:
-  #     - mysql-db
-  #   environment:
-  #     - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/mydatabase?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-  #     - SPRING_DATASOURCE_USERNAME=root
-  #     - SPRING_DATASOURCE_PASSWORD=
-  #   networks:
-  #     - my-network
-  #   restart: on-failure
+    ports:
+      - "8088:8082"
+    depends_on:
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/mydatabase?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    networks:
+      - my-network
+    restart: on-failure
 
   # angular-app:
   #   image: samarbouzezi/devops_project:angular
