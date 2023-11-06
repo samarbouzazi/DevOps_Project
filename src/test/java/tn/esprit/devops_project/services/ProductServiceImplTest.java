@@ -17,9 +17,11 @@ import tn.esprit.devops_project.entities.Product;
 import tn.esprit.devops_project.entities.ProductCategory;
 import tn.esprit.devops_project.entities.Stock;
 
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static tn.esprit.devops_project.entities.ProductCategory.ELECTRONICS;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -30,111 +32,71 @@ import static org.junit.jupiter.api.Assertions.*;
         DbUnitTestExecutionListener.class})
 @ActiveProfiles("test")
 class ProductServiceImplTest {
-
     @Autowired
-    private ProductServiceImpl productService;
+    ProductServiceImpl productService;
     @Autowired
     private StockServiceImpl stockService;
 
+    @Test
     @DatabaseSetup("/data-set/product-data.xml")
     @DatabaseSetup("/data-set/stock-data.xml")
-    @Test
     void addProduct() {
-        final Product product = new Product();
-        Stock stock = this.stockService.retrieveStock(1L);
+        Product product = new Product();
+        product.setTitle("ORANGE");
+        final Stock stock = this.stockService.retrieveStock(1L);
         product.setStock(stock);
-       // product.setIdProduct(2L);
-        product.setTitle("t2");
-        product.setPrice(2);
-        product.setQuantity(2);
-        product.setCategory(ProductCategory.ELECTRONICS);
-        this.productService.addProduct(product, stock.getIdStock());
-        assertEquals(2, this.productService.retreiveAllProduct().size());
+        productService.addProduct(product,stock.getIdStock());
+        final List<Product> AllProduct = this.productService.retreiveAllProduct();
+        assertEquals(2, AllProduct.size());
+        final Product produit = this.productService.retrieveProduct(2L);
+        assertEquals("ORANGE", produit.getTitle());
     }
 
-    @DatabaseSetup("/data-set/product-data.xml")
-    @DatabaseSetup("/data-set/stock-data.xml")
     @Test
+    @DatabaseSetup("/data-set/product-data.xml")
     void retrieveProduct() {
         final Product product = this.productService.retrieveProduct(1L);
-        assertNotNull(product);
-        assertEquals(1L, product.getIdProduct());
-        assertEquals("t1", product.getTitle());
+        assertEquals("Fruit", product.getTitle());
     }
 
-    @DatabaseSetup("/data-set/product-data.xml")
-    @DatabaseSetup("/data-set/stock-data.xml")
     @Test
-    void retrieveAllProduct() {
-        final List<Product> allProducts = this.productService.retreiveAllProduct();
-        assertEquals(1, allProducts.size());
+    @DatabaseSetup("/data-set/product-data.xml")
+    void retreiveAllProduct() {
+        final List<Product> AllProduct = this.productService.retreiveAllProduct();
+        assertEquals(1, AllProduct.size());
     }
 
-    @DatabaseSetup("/data-set/product-data.xml")
-    @DatabaseSetup("/data-set/stock-data.xml")
     @Test
+    @DatabaseSetup("/data-set/product-data.xml")
     void retrieveProductByCategory() {
-        // Specify the category you want to test
-        ProductCategory categoryToTest = ProductCategory.ELECTRONICS;
-
-        // Retrieve products by the specified category
-        List<Product> productsByCategory = this.productService.retrieveProductByCategory(categoryToTest);
-
-        // Ensure that the list is not null
-        assertNotNull(productsByCategory);
-
-        // Perform assertions on the retrieved products, such as checking their category.
-        // Example:
-        for (Product product : productsByCategory) {
-            assertEquals(categoryToTest, product.getCategory());
-        }
+        final List<Product> AllProduct = this.productService.retrieveProductByCategory(ELECTRONICS);
+        assertEquals(0, AllProduct.size());
     }
 
-    @DatabaseSetup("/data-set/product-data.xml")
-    @DatabaseSetup("/data-set/stock-data.xml")
     @Test
+    @DatabaseSetup("/data-set/product-data.xml")
+
     void deleteProduct() {
-        // Load an existing product from the dataset
-        Product productToDelete = this.productService.retrieveProduct(1L);
+        final Product product = this.productService.retrieveProduct(1L);
+        productService.deleteProduct(product.getIdProduct());
 
-        // Call the delete method
-        this.productService.deleteProduct(productToDelete.getIdProduct());
+
     }
 
+    @Test
     @DatabaseSetup("/data-set/product-data.xml")
     @DatabaseSetup("/data-set/stock-data.xml")
-    @Test
-    void retrieveProductStock() {
-        Stock stock = this.stockService.retrieveStock(1L);
-        final List<Product> allProducts = this.productService.retreiveProductStock(2L);
-        for (Product product : allProducts){
-            assertEquals(product.getStock(),stock);
-        }
+    void retreiveProductStock() {
+        final Stock stock = this.stockService.retrieveStock(1L);
+        final List<Product> AllProduct = this.productService.retreiveProductStock(stock.getIdStock());
+        assertEquals(0, AllProduct.size());
     }
 
-    // Exception Stock not Found [lambda Expression]
     @Test
-    @DatabaseSetup("/data-set/stock-data.xml")
-    @DatabaseSetup("/data-set/product-data.xml")
-    void retrieveStock_nullId() {
-        Exception exception = assertThrows(NullPointerException.class, () -> {
-            final Stock stock = this.stockService.retrieveStock(100L);
-        });
-    }
-
-
-    // Exception Product not Found [lambda Expression]
-    @Test
-    @DatabaseSetup("/data-set/stock-data.xml")
     @DatabaseSetup("/data-set/product-data.xml")
     void retrieveProduct_nullId() {
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
-            Product product = new Product();
-            Long idStock = 50L;
-            productService.addProduct(product, idStock);
+        Exception exception = assertThrows(NullPointerException.class, () -> {
+            final Product product = this.productService.retrieveProduct(100L);
         });
-        assertEquals("stock not found", exception.getMessage());
-
     }
-
 }

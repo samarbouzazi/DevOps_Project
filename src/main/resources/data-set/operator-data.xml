@@ -2,8 +2,8 @@
 <dataset>
     <operator
             ID_OPERATEUR="1"
-            fname="name 1"
-            lname="lname 1"
-            password="pass"
+            fname="mohamed"
+            lname="rouahi"
+            password="ertydfgh"
     />
 </dataset>

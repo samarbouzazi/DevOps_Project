@@ -1,174 +1,68 @@
 package tn.esprit.devops_project.services;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class InvoiceServiceImplTest {
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import tn.esprit.devops_project.entities.Invoice;
+import tn.esprit.devops_project.entities.Operator;
+import tn.esprit.devops_project.entities.Supplier;
+import tn.esprit.devops_project.repositories.InvoiceDetailRepository;
+import tn.esprit.devops_project.repositories.InvoiceRepository;
+import tn.esprit.devops_project.repositories.OperatorRepository;
+import tn.esprit.devops_project.repositories.SupplierRepository;
+import tn.esprit.devops_project.services.Iservices.IInvoiceService;
 
-    @Mock
-    private InvoiceRepository invoiceRepository;
+import java.util.Date;
+import java.util.List;
 
-    @Mock
-    private OperatorRepository operatorRepository;
+@Service
+@Slf4j
+@AllArgsConstructor
+public class InvoiceServiceImpl implements IInvoiceService {
 
-    @Mock
-    private InvoiceDetailRepository invoiceDetailRepository;
+	final InvoiceRepository invoiceRepository;
+	final OperatorRepository operatorRepository;
+	final InvoiceDetailRepository invoiceDetailRepository;
+	final SupplierRepository supplierRepository;
+	
+	@Override
+	public List<Invoice> retrieveAllInvoices() {
+		return invoiceRepository.findAll();
+	}
+	@Override
+	public void cancelInvoice(Long invoiceId) {
+		// method 01
+		Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(() -> new NullPointerException("Invoice not found"));
+		invoice.setArchived(true);
+		invoiceRepository.save(invoice);
+		//method 02 (Avec JPQL)
+		invoiceRepository.updateInvoice(invoiceId);
+	}
 
-    @Mock
-    private SupplierRepository supplierRepository;
+	@Override
+	public Invoice retrieveInvoice(Long invoiceId) {
 
-    @InjectMocks
-    private InvoiceServiceImpl invoiceService;
+		return invoiceRepository.findById(invoiceId).orElseThrow(() -> new NullPointerException("Invoice not found"));
+	}
 
-    @Test
-    public void testRetrieveAllInvoices() {
-        // Arrange
-        List<Invoice> invoices = new ArrayList<>();
-        invoices.add(new Invoice());
-        when(invoiceRepository.findAll()).thenReturn(invoices);
+	@Override
+	public List<Invoice> getInvoicesBySupplier(Long idSupplier) {
+		Supplier supplier = supplierRepository.findById(idSupplier).orElseThrow(() -> new NullPointerException("Supplier not found"));
+		return (List<Invoice>) supplier.getInvoices();
+	}
 
-        // Act
-        List<Invoice> result = invoiceService.retrieveAllInvoices();
+	@Override
+	public void assignOperatorToInvoice(Long idOperator, Long idInvoice) {
+		Invoice invoice = invoiceRepository.findById(idInvoice).orElseThrow(() -> new NullPointerException("Invoice not found"));
+		Operator operator = operatorRepository.findById(idOperator).orElseThrow(() -> new NullPointerException("Operator not found"));
+		operator.getInvoices().add(invoice);
+		operatorRepository.save(operator);
+	}
 
-        // Assert
-        assertEquals(invoices, result);
-    }
+	@Override
+	public float getTotalAmountInvoiceBetweenDates(Date startDate, Date endDate) {
+		return invoiceRepository.getTotalAmountInvoiceBetweenDates(startDate, endDate);
+	}
 
-    @Test
-    public void testCancelInvoice() {
-        // Arrange
-        Long invoiceId = 1L;
-        Invoice invoice = new Invoice();
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.of(invoice));
 
-        // Act
-        invoiceService.cancelInvoice(invoiceId);
-
-        // Assert
-        assertTrue(invoice.getArchived());
-        verify(invoiceRepository, times(1)).save(invoice);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void testCancelInvoiceNotFound() {
-        // Arrange
-        Long invoiceId = 1L;
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.cancelInvoice(invoiceId);
-    }
-
-    @Test
-    public void testRetrieveInvoice() {
-        // Arrange
-        Long invoiceId = 1L;
-        Invoice invoice = new Invoice();
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.of(invoice));
-
-        // Act
-        Invoice result = invoiceService.retrieveInvoice(invoiceId);
-
-        // Assert
-        assertEquals(invoice, result);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void testRetrieveInvoiceNotFound() {
-        // Arrange
-        Long invoiceId = 1L;
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.retrieveInvoice(invoiceId);
-    }
-
-    @Test
-    public void testGetInvoicesBySupplier() {
-        // Arrange
-        Long supplierId = 1L;
-        Supplier supplier = new Supplier();
-        when(supplierRepository.findById(supplierId)).thenReturn(Optional.of(supplier));
-
-        Invoice invoice1 = new Invoice();
-        Invoice invoice2 = new Invoice();
-        List<Invoice> invoices = Arrays.asList(invoice1, invoice2);
-        supplier.setInvoices(new HashSet<>(invoices));
-
-        // Act
-        List<Invoice> result = invoiceService.getInvoicesBySupplier(supplierId);
-
-        // Assert
-        assertEquals(invoices, result);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void testGetInvoicesBySupplierNotFound() {
-        // Arrange
-        Long supplierId = 1L;
-        when(supplierRepository.findById(supplierId)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.getInvoicesBySupplier(supplierId);
-    }
-
-    @Test
-    public void testAssignOperatorToInvoice_Success() {
-        // Arrange
-        Long idOperator = 1L;
-        Long idInvoice = 2L;
-
-        Operator operator = new Operator();
-        Invoice invoice = new Invoice();
-
-        when(operatorRepository.findById(idOperator)).thenReturn(Optional.of(operator));
-        when(invoiceRepository.findById(idInvoice)).thenReturn(Optional.of(invoice));
-
-        // Act
-        invoiceService.assignOperatorToInvoice(idOperator, idInvoice);
-
-        // Assert
-        assertTrue(operator.getInvoices().contains(invoice));
-        verify(operatorRepository, times(1)).save(operator);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void testAssignOperatorToInvoice_InvoiceNotFound() {
-        // Arrange
-        Long idOperator = 1L;
-        Long idInvoice = -1L;
-        
-        when(invoiceRepository.findById(idInvoice)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.assignOperatorToInvoice(idOperator, idInvoice);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void testAssignOperatorToInvoice_OperatorNotFound() {
-        // Arrange
-        Long idOperator = -1L;
-        Long idInvoice = 2L;
-
-        when(operatorRepository.findById(idOperator)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.assignOperatorToInvoice(idOperator, idInvoice);
-    }
-
-    @Test
-    public void testGetTotalAmountInvoiceBetweenDates() {
-        // Arrange
-        Date startDate = new Date(123, 10, 1); // Adjust year, month, and day as needed
-        Date endDate = new Date(123, 10, 5);   // Adjust year, month, and day as needed
-
-        // Mock the behavior of invoiceRepository.getTotalAmountInvoiceBetweenDates
-        when(invoiceRepository.getTotalAmountInvoiceBetweenDates(startDate, endDate)).thenReturn(200f);
-
-        // Act
-        float totalAmount = invoiceService.getTotalAmountInvoiceBetweenDates(startDate, endDate);
-
-        // Assert
-        assertEquals(200f, totalAmount, 0.01); // Adjust the delta value as needed
-    }
 }

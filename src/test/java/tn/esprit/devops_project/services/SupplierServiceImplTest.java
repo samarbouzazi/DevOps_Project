@@ -16,12 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.devops_project.entities.Operator;
 import tn.esprit.devops_project.entities.Stock;
 import tn.esprit.devops_project.entities.Supplier;
-import tn.esprit.devops_project.entities.SupplierCategory;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
@@ -31,81 +29,59 @@ import static org.junit.jupiter.api.Assertions.*;
         DbUnitTestExecutionListener.class})
 @ActiveProfiles("test")
 class SupplierServiceImplTest {
-
     @Autowired
     SupplierServiceImpl supplierService;
 
-    // DONE
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
     void retrieveAllSuppliers() {
-        final List<Supplier> allSuppliers = this.supplierService.retrieveAllSuppliers();
-        assertEquals(allSuppliers.size(), 1);
+        final List<Supplier> AllSuppliers = this.supplierService.retrieveAllSuppliers();
+        assertEquals(1, AllSuppliers.size());
     }
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
     void addSupplier() {
-        final Supplier supplier = new Supplier();
-        supplier.setIdSupplier(2L);
-        supplier.setSupplierCategory(SupplierCategory.ORDINAIRE);
-        supplier.setCode("c2");
-        supplier.setLabel("label 2");
-        this.supplierService.addSupplier(supplier);
-        assertEquals(this.supplierService.retrieveAllSuppliers().size(),2);
-        assertEquals(this.supplierService.retrieveSupplier(2L).getCode(),"c2");
+
+        Supplier supplier = new Supplier();
+        supplier.setLabel("hamma");
+        supplierService.addSupplier(supplier);
+
+        final List<Supplier> AllSuppliers = this.supplierService.retrieveAllSuppliers();
+        assertEquals(2,AllSuppliers.size());
+
+        final Supplier addedSupplier = this.supplierService.retrieveSupplier(2L);
+        assertEquals("hamma", addedSupplier.getLabel());
     }
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
     void updateSupplier() {
-        // Load an existing supplier from the dataset
-        Supplier existingSupplier = this.supplierService.retrieveSupplier(1L);
-
-        // Modify the supplier's data
-        existingSupplier.setLabel("Updated Label");
-
-        // Call the update method
-        this.supplierService.updateSupplier(existingSupplier);
-
-        // Retrieve the supplier again and assert that the changes were saved
-        Supplier updatedSupplier = this.supplierService.retrieveSupplier(1L);
-        assertEquals("Updated Label", updatedSupplier.getLabel());
+        Supplier supplier = this.supplierService.retrieveSupplier(1L);
+        supplier.setLabel("UpdatedLabel");
+        supplierService.updateSupplier(supplier);
+        Supplier updateSupplier = this.supplierService.retrieveSupplier(1L);
+        assertEquals("UpdatedLabel", updateSupplier.getLabel());
     }
 
-
-
-
-    @DatabaseSetup("/data-set/supplier-data.xml")
     @Test
+    @DatabaseSetup("/data-set/supplier-data.xml")
+    void deleteSupplier() {
+        final Supplier supplier = this.supplierService.retrieveSupplier(1L);
+        supplierService.deleteSupplier(supplier.getIdSupplier());
+    }
+
+    @Test
+    @DatabaseSetup("/data-set/supplier-data.xml")
     void retrieveSupplier() {
         final Supplier supplier = this.supplierService.retrieveSupplier(1L);
-        assertNotNull(supplier);
-        assertEquals(1L, supplier.getIdSupplier());
-        assertEquals("label 1", supplier.getLabel());
-
+        assertEquals("SUPP", supplier.getLabel());
     }
-
-    @DatabaseSetup("/data-set/supplier-data.xml")
-    @Test
-    void deleteSupplier() {
-        // Load an existing supplier from the dataset
-        Supplier supplierToDelete = this.supplierService.retrieveSupplier(1L);
-
-        // Call the delete method
-        this.supplierService.deleteSupplier(supplierToDelete.getIdSupplier());
-//
-//        // Attempt to retrieve the deleted supplier, it should be null
-//        Supplier deletedSupplier = this.supplierService.retrieveSupplier(2L);
-//        assertNull(deletedSupplier);
-    }
-
-    // Exception Retrieve Supplier
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
-    void retrieveSupplier_Null() {
+    void retrieveSupplier_nullId() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            final Supplier supplier = this.supplierService.retrieveSupplier(50L);
-        });
+            final Supplier  supplier  = this.supplierService.retrieveSupplier(100L);
+    });
     }
 }

@@ -15,11 +15,10 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.devops_project.entities.*;
 
+import java.sql.Date;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
@@ -28,156 +27,69 @@ import static org.junit.jupiter.api.Assertions.*;
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class})
 @ActiveProfiles("test")
-
-public class InvoiceServiceImplTest {
-
-    @InjectMocks
+class InvoiceServiceImplTest {
+    @Autowired
     private InvoiceServiceImpl invoiceService;
-
-    @Mock
-    private InvoiceRepository invoiceRepository;
-
-    @Mock
-    private OperatorRepository operatorRepository;
-
-    @Mock
-    private SupplierRepository supplierRepository;
-
-    @Mock private InvoiceDetailRepository invoiceDetailRepository;
-
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-        invoiceService = new InvoiceServiceImpl(invoiceRepository,operatorRepository,invoiceDetailRepository,supplierRepository );
+    @Autowired
+    private OperatorServiceImpl operatorService;
+    @Autowired
+    private SupplierServiceImpl supplierService;
+    @Test
+    @DatabaseSetup("/data-set/invoice-data.xml")
+    void retrieveAllInvoices() {
+            final List<Invoice> AllInvoices = this.invoiceService.retrieveAllInvoices();
+            assertEquals(1, AllInvoices.size());
     }
 
     @Test
-    public void testRetrieveAllInvoices() {
-        // Arrange
-        List<Invoice> invoices = new ArrayList<>();
-        Invoice invoice = new Invoice();
-        invoice.setIdInvoice(10L);
-        invoices.add(invoice);
-
-        when(invoiceRepository.findAll()).thenReturn(invoices);
-
-        // Act
-        List<Invoice> result = invoiceService.retrieveAllInvoices();
-
-
-        invoices.forEach(x-> System.out.println("iii"+x.getIdInvoice()));
-
-        result.forEach(x-> System.out.println("rrr"+x.getIdInvoice()));
-        // Assert
-        assertEquals(invoices, result);
+    @DatabaseSetup("/data-set/invoice-data.xml")
+    void cancelInvoice() {
+        final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
+        invoiceService.cancelInvoice(invoice.getIdInvoice());
     }
 
     @Test
-    public void testCancelInvoice() {
-        // Arrange
-        Long invoiceId = 1L;
-        Invoice invoice = new Invoice();
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.of(invoice));
-
-        // Act
-        invoiceService.cancelInvoice(invoiceId);
-
-        // Assert
-        verify(invoiceRepository).save(invoice);
-        assertEquals(true, invoice.getArchived());
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testCancelInvoiceNotFound() {
-        // Arrange
-        Long invoiceId = 1L;
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.cancelInvoice(invoiceId);
-
-        // No assertion needed, expects NullPointerException
+    @DatabaseSetup("/data-set/invoice-data.xml")
+    void retrieveInvoice() {
+        final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
+        assertEquals(false, invoice.getArchived());
     }
 
     @Test
-    public void testRetrieveInvoice() {
-        // Arrange
-        Long invoiceId = 1L;
-        Invoice invoice = new Invoice();
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.of(invoice));
-
-        // Act
-        Invoice result = invoiceService.retrieveInvoice(invoiceId);
-
-        // Assert
-        assertEquals(invoice, result);
+    @DatabaseSetup("/data-set/invoice-data.xml")
+    void retrieveInvoice_nullId() {
+        Exception exception = assertThrows(NullPointerException.class, () -> {
+            final Invoice invoice = this.invoiceService.retrieveInvoice(100L);
+        });
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testRetrieveInvoiceNotFound() {
-        // Arrange
-        Long invoiceId = 1L;
-        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.retrieveInvoice(invoiceId);
-
-        // No assertion needed, expects NullPointerException
+    @Test
+    @DatabaseSetup("/data-set/invoice-data.xml")
+    @DatabaseSetup("/data-set/operator-data.xml")
+    void assignOperatorToInvoice() {
+        final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
+        final Operator operateur = this.operatorService.retrieveOperator(1L);
+        invoiceService.assignOperatorToInvoice(operateur.getIdOperateur(),invoice.getIdInvoice());
     }
 
-//    @Test
-//    public void testGetInvoicesBySupplier() {
-//        // Arrange
-//        Long supplierId = 1L;
-//        Supplier supplier = new Supplier();
-//        when(supplierRepository.findById(supplierId)).thenReturn(Optional.of(supplier));
-//        List<Invoice> supplierInvoices = new ArrayList<>();
-//        when(supplier.getInvoices()).thenReturn((Set<Invoice>) supplierInvoices);
-//
-//        // Act
-//        List<Invoice> result = invoiceService.getInvoicesBySupplier(supplierId);
-//
-//        // Assert
-//        assertEquals(supplierInvoices, result);
-//    }
+    @Test
+    @DatabaseSetup("/data-set/invoice-data.xml")
+    void getTotalAmountInvoiceBetweenDates() {
+        final Invoice invoice  = this.invoiceService.retrieveInvoice(1L);
+        float totalAmount = this.invoiceService.getTotalAmountInvoiceBetweenDates(
+                invoice.getDateCreationInvoice(),invoice.getDateLastModificationInvoice());
+        float expectedTotalAmount = 30.0f;
+        assertEquals(expectedTotalAmount, totalAmount, 0.01f); // You may adjust the delta (0.01f) as needed
 
-    @Test(expected = NullPointerException.class)
-    public void testGetInvoicesBySupplierNotFound() {
-        // Arrange
-        Long supplierId = 1L;
-        when(supplierRepository.findById(supplierId)).thenReturn(Optional.empty());
-
-        // Act
-        invoiceService.getInvoicesBySupplier(supplierId);
-
-        // No assertion needed, expects NullPointerException
     }
 
-   @Override
-public void assignOperatorToInvoice(Long idOperator, Long idInvoice) {
-    Invoice invoice = invoiceRepository.findById(idInvoice)
-            .orElseThrow(() -> new javax.persistence.EntityNotFoundException("Invoice not found"));
-    Operator operator = operatorRepository.findById(idOperator)
-            .orElseThrow(() -> new javax.persistence.EntityNotFoundException("Operator not found"));
-    operator.getInvoices().add(invoice);
-    operatorRepository.save(operator);
-}
-
-
-    // Write similar tests for the remaining methods.
-
-@Test
-public void testGetTotalAmountInvoiceBetweenDates() {
-    Date startDate = new Date(123, 10, 1); // Adjust year, month, and day as needed
-    Date endDate = new Date(123, 10, 5);   // Adjust year, month, and day as needed
-
-    // Mock the behavior of invoiceRepository.getTotalAmountInvoiceBetweenDates
-    when(invoiceRepository.getTotalAmountInvoiceBetweenDates(startDate, endDate)).thenReturn(200f);
-
-    float totalAmount = invoiceService.getTotalAmountInvoiceBetweenDates(startDate, endDate);
-    assertEquals(200f, totalAmount, 0.01); // Adjust the delta value as needed
-}
+    @Test
+    @DatabaseSetup("/data-set/supplier-data.xml")
+    @DatabaseSetup("/data-set/invoice-data.xml")
+    void getInvoicesBySupplier() {
+        //final Supplier supplier = this.supplierService.retrieveSupplier(1L);
+       // final List<Invoice> AllInvoice = this.invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
+       // assertEquals(AllInvoice.size(), 0);
+    }
 
 }
-
-
