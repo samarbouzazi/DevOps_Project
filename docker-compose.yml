@@ -36,7 +36,7 @@ services:
     container_name: devops_project_angular
 
     ports:
-      - "4208:80"
+      - "80:80"
     depends_on:
       - spring-boot-app
     networks:
