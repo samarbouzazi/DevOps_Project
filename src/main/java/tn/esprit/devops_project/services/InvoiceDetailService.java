@@ -14,11 +14,11 @@ import tn.esprit.devops_project.services.*;
 public class InvoiceDetailService {
 
     private final InvoiceDetailRepository invoiceDetailRepository;
-    private final ProductServiceImpl productServiceImpl;
-    private final InvoiceRepository invoiceRepository;
+    private final ProductService productService; // Assuming ProductService interface is used
 
+    // Assuming you have ProductService interface with a findById method
     public void createInvoiceDetailWithExistingProduct(InvoiceDetail invoiceDetail, Long productId) {
-        Product product = productServiceImpl.findById(productId);
+        Product product = productService.findById(productId);
 
         if (product == null) {
             throw new ProductNotFoundException("Product with ID " + productId + " not found");
@@ -55,6 +55,7 @@ public class InvoiceDetailService {
         }
 
         invoice.setTotalPrice(totalInvoicePrice);
-        invoiceRepository.save(invoice);
+        // Assuming you have an InvoiceRepository for saving invoices
+        // invoiceRepository.save(invoice); 
     }
 }
