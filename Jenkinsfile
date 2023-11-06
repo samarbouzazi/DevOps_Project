@@ -108,55 +108,55 @@ pipeline {
 
 
 
-    // stage ('NEXUS DEPLOY') {
-    //    steps {
-    //      sh 'mvn deploy -DskipTests'
-    //    }
-    // }
+    stage ('NEXUS DEPLOY') {
+       steps {
+         sh 'mvn deploy -DskipTests'
+       }
+    }
 
 
-    //     stage('Build Docker') {
-    //   steps {
-    //         sh "docker build -t $BACK_TAG ."
-    //   }
-    //     }
+        stage('Build Docker') {
+      steps {
+            sh "docker build -t $BACK_TAG ."
+      }
+        }
     
     
-    // stage('Docker Login') {
-    //   steps {
-    //     withCredentials([usernamePassword(credentialsId: 'dockercred', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-    //       sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-    //     }
-    //   }
-    // }
+    stage('Docker Login') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockercred', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+          sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
+        }
+      }
+    }
 
-    // //  stage('Docker Push') {
-    // //   steps {
-    // //     sh "docker push ${BACK_TAG}"
-    // //   }
-    // // }
+     stage('Docker Push') {
+      steps {
+        sh "docker push ${BACK_TAG}"
+      }
+    }
 
 
-    // // stage('Remove Containers') {
-    // //   steps {
-    // //     sh '''
-    // //     container_ids=$(docker ps -q --filter "publish=8082/tcp")
-    // //     if [ -n "$container_ids" ]; then
-    // //       echo "Stopping and removing containers..."
-    // //       docker stop $container_ids
-    // //       docker rm $container_ids
-    // //     else
-    // //       echo "No containers found using port 8082."
-    // //     fi
-    // //     '''
-    // //   }
-    // // }
+    stage('Remove Containers') {
+      steps {
+        sh '''
+        container_ids=$(docker ps -q --filter "publish=8082/tcp")
+        if [ -n "$container_ids" ]; then
+          echo "Stopping and removing containers..."
+          docker stop $container_ids
+          docker rm $container_ids
+        else
+          echo "No containers found using port 8082."
+        fi
+        '''
+      }
+    }
 
-    //   stage('docker compose') {
-    //   steps {
-    //         sh "docker-compose up "
-    //   }
-    //     }
+      stage('docker compose') {
+      steps {
+            sh "docker-compose up "
+      }
+        }
       
 
   }
