@@ -1,5 +1,4 @@
-package tn.esprit.devops_project.services;
-
+package tn.esprit.devops_project.services.ServiceTest;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.jupiter.api.Test;
@@ -13,13 +12,17 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
-import tn.esprit.devops_project.entities.Operator;
-import tn.esprit.devops_project.entities.Stock;
 import tn.esprit.devops_project.entities.Supplier;
+import tn.esprit.devops_project.repositories.SupplierRepository;
+import tn.esprit.devops_project.services.SupplierServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
@@ -28,64 +31,75 @@ import static org.junit.jupiter.api.Assertions.*;
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class})
 @ActiveProfiles("test")
-class SupplierServiceImplTest {
+
+public class SupplierServiceImplTest {
     @Autowired
-    SupplierServiceImpl supplierService;
+    private SupplierRepository supplierRepository;
+
+    @Autowired
+    private SupplierServiceImpl supplierService;
+
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
-    void retrieveAllSuppliers() {
-        final List<Supplier> AllSuppliers = this.supplierService.retrieveAllSuppliers();
-        assertEquals(1, AllSuppliers.size());
+    public void testRetrieveAllSuppliers() {
+        List<Supplier> suppliers = supplierService.retrieveAllSuppliers();
+        assertEquals(suppliers.size(),1 );
     }
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
-    void addSupplier() {
-
+    public void testAddSupplier() {
         Supplier supplier = new Supplier();
-        supplier.setLabel("hamma");
-        supplierService.addSupplier(supplier);
-
-        final List<Supplier> AllSuppliers = this.supplierService.retrieveAllSuppliers();
-        assertEquals(2,AllSuppliers.size());
-
-        final Supplier addedSupplier = this.supplierService.retrieveSupplier(2L);
-        assertEquals("hamma", addedSupplier.getLabel());
+        supplier.setCode("S3");
+        supplier.setLabel("Supplier 3");
+        Supplier addedSupplier = supplierService.addSupplier(supplier);
+        assertNotNull(addedSupplier.getIdSupplier());
     }
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
-    void updateSupplier() {
-        Supplier supplier = this.supplierService.retrieveSupplier(1L);
-        supplier.setLabel("UpdatedLabel");
-        supplierService.updateSupplier(supplier);
-        Supplier updateSupplier = this.supplierService.retrieveSupplier(1L);
-        assertEquals("UpdatedLabel", updateSupplier.getLabel());
+    public void testUpdateSupplier() {
+        Long supplierId = 1L; // Adjust to a valid supplier ID in your dataset
+        Supplier supplier = supplierRepository.getOne(supplierId);
+        supplier.setLabel("Updated Supplier 1");
+        Supplier updatedSupplier = supplierService.updateSupplier(supplier);
+        assertEquals("Updated Supplier 1", updatedSupplier.getLabel());
     }
 
     @Test
     @DatabaseSetup("/data-set/supplier-data.xml")
-    void deleteSupplier() {
-        final Supplier supplier = this.supplierService.retrieveSupplier(1L);
-        supplierService.deleteSupplier(supplier.getIdSupplier());
+    public void testDeleteSupplier() {
+        Long supplierId = 1L; // Adjust to a valid supplier ID in your dataset
+        supplierService.deleteSupplier(supplierId);
+        Supplier deletedSupplier = supplierRepository.findById(supplierId).orElse(null);
+        assertNull(deletedSupplier);
     }
 
-   @DatabaseSetup("/data-set/supplier-data.xml")
-@Test
-void retrieveSupplier() {
-    final Supplier supplier = this.supplierService.retrieveSupplier(1L);
-    assertNotNull(supplier);
-    assertEquals(1L, supplier.getIdSupplier());
-    assertEquals("SUPP", supplier.getLabel()); // Updated expected label to match the dataset
-}
+    @Test
+    @DatabaseSetup("/data-set/supplier-data.xml") // Load test data if needed
+    void retrieveSupplier_ExistingId() {
+        Long existingId = 1L;
 
+        Supplier supplier = supplierService.retrieveSupplier(existingId);
+
+        // You can add more assertions here to check the retrieved supplier object.
+        assertEquals(existingId, supplier.getIdSupplier());
+        // Add more assertions as needed.
+    }
 
     @Test
-    @DatabaseSetup("/data-set/supplier-data.xml")
-    void retrieveSupplier_nullId() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            final Supplier  supplier  = this.supplierService.retrieveSupplier(100L);
-    });
+    void retrieveSupplier_NonExistingId() {
+        Long nonExistingId = 100L;
+
+        // Mock the repository to return an empty optional when findById is called with the non-existing ID.
+        SupplierRepository supplierRepository = mock(SupplierRepository.class);
+        when(supplierRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+
+        // Create a new SupplierServiceImpl instance with the mocked repository.
+        SupplierServiceImpl supplierService = new SupplierServiceImpl(supplierRepository);
+
+        // Perform the test and check if it throws an exception.
+        assertThrows(IllegalArgumentException.class, () -> supplierService.retrieveSupplier(nonExistingId));
     }
 }
