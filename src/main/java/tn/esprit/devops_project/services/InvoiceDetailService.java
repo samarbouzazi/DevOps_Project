@@ -3,59 +3,58 @@ package tn.esprit.devops_project.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import tn.esprit.devops_project.entities.Invoice;
-import tn.esprit.devops_project.entities.InvoiceDetail;
-import tn.esprit.devops_project.entities.Operator;
-import tn.esprit.devops_project.entities.Supplier;
-import tn.esprit.devops_project.entities.Product;
-import tn.esprit.devops_project.repositories.InvoiceDetailRepository;
-import tn.esprit.devops_project.repositories.InvoiceRepository;
-import tn.esprit.devops_project.repositories.OperatorRepository;
-import tn.esprit.devops_project.repositories.SupplierRepository;
-import tn.esprit.devops_project.services.Iservices.IInvoiceService;
-import tn.esprit.devops_project.services.ProductServiceImpl;
-
-
-import java.util.Date;
-import java.util.List;
+import tn.esprit.devops_project.entities.*;
+import tn.esprit.devops_project.exceptions.ProductNotFoundException;
+import tn.esprit.devops_project.repositories.*;
+import tn.esprit.devops_project.services.*;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class InvoiceDetailService {
 
-	
-
-	final InvoiceDetailRepository invoiceDetailRepository;
-	final ProductServiceImpl productServiceImpl;
-
+    private final InvoiceDetailRepository invoiceDetailRepository;
+    private final ProductServiceImpl productServiceImpl;
+    private final InvoiceRepository invoiceRepository;
 
     public void createInvoiceDetailWithExistingProduct(InvoiceDetail invoiceDetail, Long productId) {
-        // Check if the product exists
         Product product = productServiceImpl.findById(productId);
+
         if (product == null) {
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException("Product with ID " + productId + " not found");
         }
 
-        // Set the product on the invoice detail
         invoiceDetail.setProduct(product);
-
-        // Save the invoice detail
         invoiceDetailRepository.save(invoiceDetail);
+
+        // Update the associated invoice's total price
+        updateInvoiceTotalPrice(invoiceDetail);
     }
 
     public void updateInvoiceDetailQuantity(InvoiceDetail invoiceDetail, int newQuantity) {
         invoiceDetail.setQuantity(newQuantity);
 
-        // Calculate the new total price
         float totalPrice = invoiceDetail.getPrice() * invoiceDetail.getQuantity();
         invoiceDetail.setTotalPrice(totalPrice);
 
-        // Save the updated invoice detail
+        updateInvoiceTotalPrice(invoiceDetail);
+
         invoiceDetailRepository.save(invoiceDetail);
     }
 
     public float calculateInvoiceDetailTotalPrice(InvoiceDetail invoiceDetail) {
         return invoiceDetail.getPrice() * invoiceDetail.getQuantity();
+    }
+
+    private void updateInvoiceTotalPrice(InvoiceDetail invoiceDetail) {
+        Invoice invoice = invoiceDetail.getInvoice();
+        float totalInvoicePrice = 0;
+
+        for (InvoiceDetail detail : invoice.getInvoiceDetails()) {
+            totalInvoicePrice += detail.getTotalPrice();
+        }
+
+        invoice.setTotalPrice(totalInvoicePrice);
+        invoiceRepository.save(invoice);
     }
 }
