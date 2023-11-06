@@ -7,11 +7,13 @@ import tn.esprit.devops_project.entities.Invoice;
 import tn.esprit.devops_project.entities.InvoiceDetail;
 import tn.esprit.devops_project.entities.Operator;
 import tn.esprit.devops_project.entities.Supplier;
+import tn.esprit.devops_project.entities.Product;
 import tn.esprit.devops_project.repositories.InvoiceDetailRepository;
 import tn.esprit.devops_project.repositories.InvoiceRepository;
 import tn.esprit.devops_project.repositories.OperatorRepository;
 import tn.esprit.devops_project.repositories.SupplierRepository;
 import tn.esprit.devops_project.services.Iservices.IInvoiceService;
+import tn.esprit.devops_project.services.ProductServiceImpl;
 
 
 import java.util.Date;
@@ -25,11 +27,12 @@ public class InvoiceDetailService {
 	
 
 	final InvoiceDetailRepository invoiceDetailRepository;
+	final ProductServiceImpl productServiceImpl;
 
 
     public void createInvoiceDetailWithExistingProduct(InvoiceDetail invoiceDetail, Long productId) {
         // Check if the product exists
-        Product product = productService.findById(productId);
+        Product product = productServiceImpl.findById(productId);
         if (product == null) {
             throw new ProductNotFoundException();
         }
