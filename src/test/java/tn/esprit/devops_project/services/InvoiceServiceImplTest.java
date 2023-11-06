@@ -85,13 +85,13 @@ class InvoiceServiceImplTest {
         assertEquals(expectedTotalAmount, totalAmount, 0.01f); 
     }
 
-    @Test
-    @DatabaseSetup("/data-set/supplier-data.xml")
-    @DatabaseSetup("/data-set/invoice-data.xml")
-    void getInvoicesBySupplier() {
-        final Supplier supplier = this.supplierService.retrieveSupplier(1L);
-        final List<Invoice> AllInvoice = this.invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
-        assertEquals(AllInvoice.size(), 1);
-    }
+@Test
+@DatabaseSetup({"/data-set/supplier-data.xml", "/data-set/invoice-data.xml"})
+void getInvoicesBySupplier() {
+    final Supplier supplier = this.supplierService.retrieveSupplier(1L);
+    final List<Invoice> AllInvoice = this.invoiceService.getInvoicesBySupplier(supplier.getIdSupplier());
+    assertEquals(1, AllInvoice.size());
+}
+
 
 }
