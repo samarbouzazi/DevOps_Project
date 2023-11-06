@@ -99,14 +99,16 @@ class ProductServiceImplTest {
 
     }
 
-    @Test
-    @DatabaseSetup("/data-set/product-data.xml")
-    @DatabaseSetup("/data-set/stock-data.xml")
-    void retreiveProductStock() {
-        final Stock stock = this.stockService.retrieveStock(1L);
-        final List<Product> AllProduct = this.productService.retreiveProductStock(stock.getIdStock());
-        assertEquals(0, AllProduct.size());
-    }
+ @Test
+@DatabaseSetup({"/data-set/product-data.xml", "/data-set/stock-data.xml"})
+void retrieveProductStock() {
+    final Stock stock = this.stockService.retrieveStock(1L);
+    final List<Product> allProducts = this.productService.retrieveProductStock(stock.getIdStock());
+    
+    // Assuming you expect 0 products, you can adjust the assertion as follows:
+    assertEquals(0, allProducts.size());
+}
+
 
     @Test
     @DatabaseSetup("/data-set/product-data.xml")
