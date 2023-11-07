@@ -92,27 +92,40 @@ pipeline {
     }
 
       
-    stage('Remove Containers') {
-      steps {
-        sh '''
-        container_ids=$(docker ps -q --filter "publish=4200/tcp")
-        if [ -n "$container_ids" ]; then
-          echo "Stopping and removing containers..."
-          docker stop $container_ids
-          docker rm $container_ids
-        else
-          echo "No containers found using port 4200."
-        fi
-        '''
-      }
-    }
+    // stage('Remove Containers') {
+    //   steps {
+    //     sh '''
+    //     container_ids=$(docker ps -q --filter "publish=4200/tcp")
+    //     if [ -n "$container_ids" ]; then
+    //       echo "Stopping and removing containers..."
+    //       docker stop $container_ids
+    //       docker rm $container_ids
+    //     else
+    //       echo "No containers found using port 4200."
+    //     fi
+    //     '''
+    //   }
+    // }
 
 
-      stage('docker compose') {
-      steps {
-            sh "docker-compose up "
-      }
-        }
+    //   stage('docker compose') {
+    //   steps {
+    //         sh "docker-compose up "
+    //   }
+    //     }
   
   }
+
+   post {
+      success {
+        mail to: 'samar.bouzezi@esprit.tn',
+        subject: 'Jenkins Build pipeline: Success',
+        body: '''Your pipeline build success.'''
+      }
+      failure {
+        mail to: 'samar.bouzezi@esprit.tn',
+        subject: 'Jenkins Build pipeline: Failure',
+        body: '''Your pipeline build failed.'''
+      }
+    }
 }
