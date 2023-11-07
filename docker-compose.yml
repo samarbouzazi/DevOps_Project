@@ -13,7 +13,7 @@ services:
       - ./data.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
       - my-network
-    restart: always
+    restart: unless-stopped
 
   spring-boot-app:
     image: samarbouzezi/devops_project:spring
@@ -29,7 +29,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=
     networks:
       - my-network
-    restart: always
+    restart: unless-stopped
 
   angular-app:
     image: samarbouzezi/devops_project:angular
@@ -41,7 +41,7 @@ services:
       - spring-boot-app
     networks:
       - my-network
-    restart: always
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus
@@ -50,7 +50,7 @@ services:
       - "9090:9090"
     networks:
       - my-network
-    restart: always
+    restart: unless-stopped
   
   grafana:
     image: grafana/grafana
@@ -61,7 +61,7 @@ services:
       - "3000:3000"
     networks:
       - my-network
-    restart: always
+    restart: unless-stopped
       
 networks:
   my-network:
