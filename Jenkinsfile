@@ -158,25 +158,23 @@ pipeline {
 //       }
 //         }
 
-  post {
-        success {
-            mail to: 'samar.bouzezi@esprit.tn',
-            subject: 'Jenkins Build pipeline: Success',
-            body: '''Your pipeline build success.
-                Build and push to Docker Hub successful.
-                Thank you, go and check it
-                Azza KOUKA'''
-        }
-        failure {
-            mail to: 'samar.bouzezi@esprit.tn',
-            subject: 'Jenkins Build pipeline: Failure',
-            body: '''Your pipeline build failed.
-                Build or push to Docker Hub failed.
-                Thank you, please check
-                Azza KOUKA'''
-        }
+     post {
+      success {
+        mail to: 'samar.bouzezi@esprit.tn',
+        subject: 'Jenkins Build pipeline: Success',
+        body: '''Your pipeline build success.
+            Build and push to Docker Hub successful.
+            Thank you, go and check it
+            samar '''
+      }
+      failure {
+        mail to: 'samar.bouzezi@esprit.tn',
+        subject: 'Jenkins Build pipeline: Failure',
+        body: '''Your pipeline build failed.
+            Build or push to Docker Hub failed.
+            Thank you, please check
+            Samar'''
+      }
     }
-      
-
   }
 }
