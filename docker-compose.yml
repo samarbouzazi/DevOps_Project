@@ -62,14 +62,6 @@ services:
     networks:
       - my-network
       
-  nginx-exporter:
-    image: "nginx/nginx-prometheus-exporter:latest"
-    command: ["-nginx.scrape-uri=http://angular-app/metrics"]  
-    ports:
-      - "9113:9113"
-    depends_on:
-      - angular-app
-
 networks:
   my-network:
   
