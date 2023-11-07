@@ -85,11 +85,11 @@ pipeline {
         }
       
 
-    //  stage('Docker Push') {
-    //   steps {
-    //     sh "docker push ${FRONT_TAG}"
-    //   }
-    // }
+     stage('Docker Push') {
+      steps {
+        sh "docker push ${FRONT_TAG}"
+      }
+    }
 
 
     // stage('Remove Containers') {
