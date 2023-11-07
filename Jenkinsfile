@@ -91,21 +91,22 @@ pipeline {
       }
     }
 
+      
+    stage('Remove Containers') {
+      steps {
+        sh '''
+        container_ids=$(docker ps -q --filter "publish=4200/tcp")
+        if [ -n "$container_ids" ]; then
+          echo "Stopping and removing containers..."
+          docker stop $container_ids
+          docker rm $container_ids
+        else
+          echo "No containers found using port 4200."
+        fi
+        '''
+      }
+    }
 
-    // stage('Remove Containers') {
-    //   steps {
-    //     sh '''
-    //     container_ids=$(docker ps -q --filter "publish=4200/tcp")
-    //     if [ -n "$container_ids" ]; then
-    //       echo "Stopping and removing containers..."
-    //       docker stop $container_ids
-    //       docker rm $container_ids
-    //     else
-    //       echo "No containers found using port 4200."
-    //     fi
-    //     '''
-    //   }
-    // }
 
       stage('docker compose') {
       steps {
