@@ -158,7 +158,9 @@ pipeline {
 //       }
 //         }
 
-     post {
+   
+  }
+    post {
       success {
         mail to: 'samar.bouzezi@esprit.tn',
         subject: 'Jenkins Build pipeline: Success',
@@ -176,5 +178,4 @@ pipeline {
             Samar'''
       }
     }
-  }
 }
