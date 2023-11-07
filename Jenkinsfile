@@ -164,18 +164,12 @@ pipeline {
       success {
         mail to: 'samar.bouzezi@esprit.tn',
         subject: 'Jenkins Build pipeline: Success',
-        body: '''Your pipeline build success.
-            Build and push to Docker Hub successful.
-            Thank you, go and check it
-            samar '''
+        body: '''Your pipeline build success.'''
       }
       failure {
         mail to: 'samar.bouzezi@esprit.tn',
         subject: 'Jenkins Build pipeline: Failure',
-        body: '''Your pipeline build failed.
-            Build or push to Docker Hub failed.
-            Thank you, please check
-            Samar'''
+        body: '''Your pipeline build failed.'''
       }
     }
 }
