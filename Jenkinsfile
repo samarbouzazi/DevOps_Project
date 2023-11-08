@@ -154,7 +154,7 @@ pipeline {
 
       stage('docker compose') {
       steps {
-            sh "docker-compose up --no-recreate"
+            sh "docker-compose up -d --no-recreate"
       }
         }
 
